@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bipul.fintrack.R
 import com.bipul.fintrack.navigation.WelcomeNavRoutes
+import com.bipul.fintrack.ui.theme.FinTrackPrimary
 
 
 @Composable
@@ -73,8 +74,10 @@ fun WelcomeScreenTwo(navController: NavHostController) {
 
             ) {
                 IconButton(
-                    onClick = { 
-                        navController.popBackStack()
+                    onClick = {
+                        if (navController.previousBackStackEntry != null) {
+                            navController.popBackStack()
+                        }
                     },
                     modifier = Modifier
 
@@ -87,10 +90,8 @@ fun WelcomeScreenTwo(navController: NavHostController) {
                 }
 
                 TextButton(
-                    onClick = { 
-                        navController.navigate(WelcomeNavRoutes.WelcomeThree.route) {
-                            popUpTo(WelcomeNavRoutes.WelcomeOne.route) { inclusive = true }
-                        }
+                    onClick = {
+                        navController.navigate(WelcomeNavRoutes.WelcomeThree.route)
                     },
                     shape = RoundedCornerShape(50.dp),
                     colors = ButtonDefaults.textButtonColors(
@@ -160,7 +161,7 @@ fun WelcomeScreenTwo(navController: NavHostController) {
                     .padding(bottom = 0.dp),
                 shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF5865F2),
+                    containerColor = FinTrackPrimary,
                     contentColor = Color.White
                 )
             ) {

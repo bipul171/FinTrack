@@ -13,12 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
@@ -30,12 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bipul.fintrack.R
 import com.bipul.fintrack.navigation.WelcomeNavRoutes
+import com.bipul.fintrack.ui.theme.FinTrackPrimary
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,29 +69,15 @@ fun WelcomeScreenOne(navController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Absolute.Right,
                 verticalAlignment = Alignment.CenterVertically
 
             ) {
-                IconButton(
-                    onClick = {
-                        navController.popBackStack()
-                    },
-                    modifier = Modifier
 
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
 
                 TextButton(
                     onClick = { 
-                        navController.navigate(WelcomeNavRoutes.WelcomeThree.route) {
-                            popUpTo(WelcomeNavRoutes.WelcomeOne.route) { inclusive = true }
-                        }
+                        navController.navigate(WelcomeNavRoutes.WelcomeThree.route)
                     },
                     shape = RoundedCornerShape(50.dp),
                     colors = ButtonDefaults.textButtonColors(
@@ -165,7 +147,7 @@ fun WelcomeScreenOne(navController: NavHostController) {
                     .padding(bottom = 0.dp),
                 shape = RoundedCornerShape(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF5865F2),
+                    containerColor = FinTrackPrimary,
                     contentColor = Color.White
                 )
             ) {
