@@ -1,0 +1,231 @@
+package com.bipul.fintrack.screens.auth
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.bipul.fintrack.navigation.WelcomeNavRoutes
+import com.bipul.fintrack.ui.theme.FinTrackPrimary
+import com.bipul.fintrack.ui.theme.ScreenBackground
+import com.bipul.fintrack.ui.theme.TextPrimary
+import com.bipul.fintrack.ui.theme.TextSecondary
+
+
+@Composable
+fun SignInScreen(navController: NavHostController) {
+
+    var emailOrUsername by remember { mutableStateOf(value = "") }
+    var password by remember { mutableStateOf(value = "") }
+    var passwordVisible by remember { mutableStateOf(false) }
+
+
+    Scaffold(
+        containerColor = ScreenBackground
+
+    ) {innerPadding->
+
+
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(paddingValues = innerPadding)
+                .padding(all = 24.dp),
+            verticalArrangement = Arrangement.Center,
+
+
+            ) {
+
+            Text(
+                text = "Welcome Back",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                color = TextPrimary
+            )
+            Spacer(modifier = Modifier.size(size = 32.dp))
+
+            OutlinedTextField(
+                value = emailOrUsername,
+                onValueChange = { emailOrUsername = it },
+                label = { Text(text = "Username / Email") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Person"
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(size = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.size(size = 16.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(text = "Password") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Password"
+                    )
+                },
+
+                visualTransformation =
+                    if (passwordVisible)
+                        VisualTransformation.None
+                    else
+                        PasswordVisualTransformation(),
+
+                trailingIcon = {
+                    IconButton(
+                        onClick = { passwordVisible = !passwordVisible }
+                    ) {
+                        Icon(
+                            imageVector = if (passwordVisible)
+                                Icons.Default.Visibility
+                            else
+                                Icons.Default.VisibilityOff,
+                            contentDescription = if (passwordVisible)
+                                "Hide Password"
+                            else
+                                "Show Password"
+                        )
+                    }
+                },
+
+                modifier = Modifier.fillMaxWidth()
+                    .height(60.dp),
+                shape = RoundedCornerShape(size = 16.dp)
+
+            )
+
+            Spacer(modifier = Modifier.size(size = 16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(space = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = false,
+                    onCheckedChange = {}
+                )
+                Text(
+                    text = "Remember Me",
+                    fontSize = 16.sp,
+                    color = TextSecondary
+                )
+            }
+
+            TextButton(
+                onClick = { },
+                modifier = Modifier.align(alignment = Alignment.Start)
+            ) {
+                Text(
+                    text = "Forgot Password?",
+                    color = TextSecondary
+                )
+            }
+
+            TextButton(
+                onClick = {
+                    navController.navigate(WelcomeNavRoutes.Home.route) {
+                        popUpTo(WelcomeNavRoutes.WelcomeOne.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(size = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = FinTrackPrimary,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Sign In",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = Color.White
+                )
+            }
+
+
+            Spacer(modifier = Modifier.size(size = 16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Don't have an account?",
+                    color = TextSecondary,
+                    fontSize = 16.sp
+                )
+
+                TextButton(
+                    onClick = {
+                        navController.navigate("sign_up")
+                    },
+                ) {
+                    Text(
+                        text = "Join now",
+                        fontWeight = FontWeight.Bold,
+                        color = FinTrackPrimary,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
