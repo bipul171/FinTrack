@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bipul.fintrack.R
-import com.bipul.fintrack.navigation.WelcomeNavRoutes
+import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.ui.theme.FinTrackPrimary
 
 
@@ -77,7 +77,7 @@ fun WelcomeScreenOne(navController: NavHostController) {
 
                 TextButton(
                     onClick = { 
-                        navController.navigate(WelcomeNavRoutes.WelcomeThree.route)
+                        navController.navigate(AppRoutes.WelcomeThree.route)
                     },
                     shape = RoundedCornerShape(50.dp),
                     colors = ButtonDefaults.textButtonColors(
@@ -139,7 +139,7 @@ fun WelcomeScreenOne(navController: NavHostController) {
 
             Button(
                 onClick = { 
-                    navController.navigate(WelcomeNavRoutes.WelcomeTwo.route)
+                    navController.navigate(AppRoutes.WelcomeTwo.route)
                 },
                 modifier = Modifier
                     .fillMaxWidth()

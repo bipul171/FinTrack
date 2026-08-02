@@ -57,7 +57,9 @@ fun HomeScreen(navController: NavHostController) {
 
                 NavigationBarItem(
                     selected = false,
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("transaction")
+                    },
                     icon = {
                         Icon(
                             imageVector = Icons.Default.ReceiptLong,

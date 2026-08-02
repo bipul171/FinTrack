@@ -1,6 +1,5 @@
 package com.bipul.fintrack.screens.auth
 
-import android.R.attr.onClick
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,7 +39,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.bipul.fintrack.navigation.WelcomeNavRoutes
+import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.ui.theme.FinTrackPrimary
 import com.bipul.fintrack.ui.theme.ScreenBackground
 import com.bipul.fintrack.ui.theme.TextPrimary
@@ -223,8 +222,8 @@ fun SignUpScreen(navController: NavHostController) {
 
         Button(
             onClick = {
-                navController.navigate(WelcomeNavRoutes.Home.route) {
-                    popUpTo(WelcomeNavRoutes.WelcomeOne.route) {
+                navController.navigate(AppRoutes.Home.route) {
+                    popUpTo(AppRoutes.WelcomeOne.route) {
                         inclusive = true
                     }
                 }

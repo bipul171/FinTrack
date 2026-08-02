@@ -21,7 +21,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,12 +28,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bipul.fintrack.R
-import com.bipul.fintrack.navigation.WelcomeNavRoutes
+import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.ui.theme.FinTrackPrimary
 
 
@@ -132,7 +130,7 @@ fun WelcomeScreenThree(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    navController.navigate(WelcomeNavRoutes.SignUp.route)
+                    navController.navigate(AppRoutes.SignUp.route)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -155,7 +153,7 @@ fun WelcomeScreenThree(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    navController.navigate(WelcomeNavRoutes.SignIn.route)
+                    navController.navigate(AppRoutes.SignIn.route)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
