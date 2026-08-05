@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.bipul.fintrack.screens.auth.SignInScreen
 import com.bipul.fintrack.screens.auth.SignUpScreen
+import com.bipul.fintrack.screens.budget.BudgetScreen
 import com.bipul.fintrack.screens.home.HomeScreen
 import com.bipul.fintrack.screens.transaction.TransactionScreen
 import com.bipul.fintrack.screens.welcome.WelcomeScreenOne
@@ -44,6 +45,10 @@ fun WelcomeNavGraph(navController: NavHostController) {
 
         composable(AppRoutes.Transaction.route) {
             TransactionScreen(navController)
+        }
+
+        composable(AppRoutes.Budget.route){
+            BudgetScreen( navController)
         }
     }
 }
