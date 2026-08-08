@@ -13,3 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Android Studio local files
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+/.idea/inspectionProfiles/
+
+# Local generated files
+/.artifacts/
