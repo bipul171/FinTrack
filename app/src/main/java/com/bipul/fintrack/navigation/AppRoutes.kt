@@ -1,6 +1,7 @@
 package com.bipul.fintrack.navigation
 
 sealed class AppRoutes(val route: String) {
+    object SplashScreen : AppRoutes("splash_screen")
     object WelcomeOne : AppRoutes("welcome_one")
     object WelcomeTwo : AppRoutes("welcome_two")
     object WelcomeThree : AppRoutes("welcome_three")

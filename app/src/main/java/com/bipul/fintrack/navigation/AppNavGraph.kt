@@ -8,6 +8,7 @@ import com.bipul.fintrack.screens.auth.SignInScreen
 import com.bipul.fintrack.screens.auth.SignUpScreen
 import com.bipul.fintrack.screens.budget.BudgetScreen
 import com.bipul.fintrack.screens.home.HomeScreen
+import com.bipul.fintrack.screens.splash.SplashScreen
 import com.bipul.fintrack.screens.transaction.TransactionScreen
 import com.bipul.fintrack.screens.welcome.WelcomeScreenOne
 import com.bipul.fintrack.screens.welcome.WelcomeScreenTwo
@@ -17,21 +18,17 @@ import com.bipul.fintrack.screens.welcome.WelcomeScreenThree
 fun WelcomeNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = AppRoutes.SplashScreen.route
+        startDestination = AppRoutes.SplashScreen.route,
     ) {
 
         composable(AppRoutes.SplashScreen.route) {
-            SplashScreen(
-                onSplashFinished = {
-
-                    navController.navigate(AppRoutes.WelcomeOne.route) {
-
-                        popUpTo(AppRoutes.SplashScreen.route) {
-                            inclusive = true
-                        }
+            SplashScreen {
+                navController.navigate(AppRoutes.WelcomeOne.route) {
+                    popUpTo(AppRoutes.SplashScreen.route) {
+                        inclusive = true
                     }
                 }
-            )
+            }
         }
 
 
@@ -64,7 +61,7 @@ fun WelcomeNavGraph(navController: NavHostController) {
         }
 
         composable(AppRoutes.Budget.route){
-            BudgetScreen( navController)
+            BudgetScreen()
         }
     }
 }
