@@ -17,8 +17,24 @@ import com.bipul.fintrack.screens.welcome.WelcomeScreenThree
 fun WelcomeNavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = AppRoutes.WelcomeOne.route
+        startDestination = AppRoutes.SplashScreen.route
     ) {
+
+        composable(AppRoutes.SplashScreen.route) {
+            SplashScreen(
+                onSplashFinished = {
+
+                    navController.navigate(AppRoutes.WelcomeOne.route) {
+
+                        popUpTo(AppRoutes.SplashScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
+        }
+
+
         composable(AppRoutes.WelcomeOne.route) {
             WelcomeScreenOne(navController)
         }
