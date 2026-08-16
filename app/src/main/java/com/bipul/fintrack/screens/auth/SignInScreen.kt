@@ -75,7 +75,7 @@ fun SignInScreen(navController: NavHostController) {
                 modifier = Modifier.size(size = 150.dp)
             )
 
-            Spacer(modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.size(8.dp))
 
             Text(
                 text = "Welcome Back",

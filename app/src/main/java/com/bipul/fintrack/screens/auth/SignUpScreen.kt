@@ -84,7 +84,7 @@ fun SignUpScreen(navController: NavHostController) {
                 modifier = Modifier.size(150.dp)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.size(8.dp))
 
             Text(
                 text = "Create Account",
@@ -100,7 +100,7 @@ fun SignUpScreen(navController: NavHostController) {
             color = TextSecondary
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
             value = fullName,
@@ -231,7 +231,7 @@ fun SignUpScreen(navController: NavHostController) {
             shape = RoundedCornerShape(16.dp)
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
