@@ -70,9 +70,9 @@ fun SignInScreen(navController: NavHostController) {
         ) {
 
             Image(
-                painter = painterResource(id = com.bipul.fintrack.R.drawable.fintrack_symble),
+                painter = painterResource(id = com.bipul.fintrack.R.drawable.fintrack_logo),
                 contentDescription = "FinTrack Logo",
-                modifier = Modifier.size(size = 100.dp)
+                modifier = Modifier.size(size = 150.dp)
             )
 
             Spacer(modifier = Modifier.size(24.dp))

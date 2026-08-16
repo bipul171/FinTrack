@@ -81,7 +81,7 @@ fun SignUpScreen(navController: NavHostController) {
             Image(
                 painter = painterResource(id = com.bipul.fintrack.R.drawable.fintrack_logo),
                 contentDescription = "FinTrack Logo",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(150.dp)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
