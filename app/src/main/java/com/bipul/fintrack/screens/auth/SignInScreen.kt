@@ -1,5 +1,6 @@
 package com.bipul.fintrack.screens.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -59,13 +61,21 @@ fun SignInScreen(navController: NavHostController) {
 
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(paddingValues = innerPadding)
                 .padding(all = 24.dp),
             verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
+            Image(
+                painter = painterResource(id = com.bipul.fintrack.R.drawable.fintrack_symble),
+                contentDescription = "FinTrack Logo",
+                modifier = Modifier.size(size = 100.dp)
+            )
 
-            ) {
+            Spacer(modifier = Modifier.size(24.dp))
 
             Text(
                 text = "Welcome Back",
