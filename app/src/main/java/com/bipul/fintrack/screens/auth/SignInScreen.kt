@@ -52,6 +52,9 @@ fun SignInScreen(navController: NavHostController) {
     var emailOrUsername by remember { mutableStateOf(value = "") }
     var password by remember { mutableStateOf(value = "") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var rememberMe by remember {
+        mutableStateOf(false)
+    }
 
 
     Scaffold(
@@ -150,8 +153,10 @@ fun SignInScreen(navController: NavHostController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = false,
-                    onCheckedChange = {}
+                    checked = rememberMe,
+                    onCheckedChange = {
+                        rememberMe = it
+                    }
                 )
                 Text(
                     text = "Remember Me",
