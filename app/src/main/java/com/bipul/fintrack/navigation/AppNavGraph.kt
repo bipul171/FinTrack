@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.bipul.fintrack.screens.auth.ForgotPasswordScreen
 import com.bipul.fintrack.screens.auth.SignInScreen
 import com.bipul.fintrack.screens.auth.SignUpScreen
 import com.bipul.fintrack.screens.budget.BudgetScreen
@@ -63,5 +64,14 @@ fun WelcomeNavGraph(navController: NavHostController) {
         composable(AppRoutes.Budget.route){
             BudgetScreen()
         }
+
+        composable(AppRoutes.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 }

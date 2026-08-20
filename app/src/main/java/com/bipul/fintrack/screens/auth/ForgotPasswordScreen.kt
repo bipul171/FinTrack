@@ -22,6 +22,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,12 +37,13 @@ import androidx.compose.ui.unit.sp
 import com.bipul.fintrack.ui.theme.FinTrackPrimary
 import com.bipul.fintrack.ui.theme.ScreenBackground
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ForgotPasswordScreen() {
+fun ForgotPasswordScreen(onBackClick: () -> Unit) {
+
+    var email by remember { mutableStateOf("") }
 
     Scaffold(
-        contentColor = ScreenBackground
+        containerColor = ScreenBackground
 
     ) {innerPadding ->
         Column(
@@ -54,7 +59,7 @@ fun ForgotPasswordScreen() {
                 horizontalArrangement = Arrangement.Start
             ) {
                 Button(
-                    onClick = {},
+                    onClick = onBackClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Transparent,
                         contentColor = Color.Black
@@ -95,8 +100,8 @@ fun ForgotPasswordScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = email,
+                onValueChange = {email = it},
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Email,
@@ -130,7 +135,7 @@ fun ForgotPasswordScreen() {
                 )
             ){
                 Text(
-                    text = "Send Rest Link",
+                    text = "Send Reset Link",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -140,7 +145,7 @@ fun ForgotPasswordScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(
-                onClick = {}
+                onClick = onBackClick
             ) {
                 Text(
                     text = "Back to Sign In",

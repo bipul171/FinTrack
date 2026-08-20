@@ -161,7 +161,9 @@ fun SignInScreen(navController: NavHostController) {
             }
 
             TextButton(
-                onClick = { },
+                onClick = {
+                    navController.navigate(AppRoutes.ForgotPassword.route)
+                },
                 modifier = Modifier.align(alignment = Alignment.Start)
             ) {
                 Text(

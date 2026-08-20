@@ -14,5 +14,5 @@ sealed class AppRoutes(val route: String) {
 
     object Transaction : AppRoutes(route = "Transaction")
     object Budget : AppRoutes(route = "Budget")
-
+    data object ForgotPassword : AppRoutes(route = "forgot_password")
 }
