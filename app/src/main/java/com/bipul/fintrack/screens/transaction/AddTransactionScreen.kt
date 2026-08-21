@@ -35,6 +35,10 @@ fun AddTransactionScreen(
         mutableStateOf("")
     }
 
+    var transactionType by remember {
+        mutableStateOf("Expense")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -53,24 +57,57 @@ fun AddTransactionScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
-            Button(
-                onClick = { },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(text = "Expense")
+            if (transactionType == "Expense") {
+                Button(
+                    onClick = {
+                        transactionType = "Expense"
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Expense")
+                }
+            } else {
+                OutlinedButton(
+                    onClick = {
+                        transactionType = "Expense"
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Expense")
+                }
             }
 
-            OutlinedButton(
-                onClick = { },
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(text = "Income")
+            if (transactionType == "Income") {
+                Button(
+                    onClick = {
+                        transactionType = "Income"
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Income")
+                }
+            } else {
+                OutlinedButton(
+                    onClick = {
+                        transactionType = "Income"
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Income")
+                }
             }
         }
 
+        Text(
+            text = "Selected: $transactionType",
+            fontSize = 14.sp
+        )
+
         OutlinedTextField(
             value = amount,
-            onValueChange = { amount = it },
+            onValueChange = {
+                amount = it
+            },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text("Amount")
@@ -83,7 +120,9 @@ fun AddTransactionScreen(
 
         OutlinedTextField(
             value = note,
-            onValueChange = { note = it },
+            onValueChange = {
+                note = it
+            },
             modifier = Modifier.fillMaxWidth(),
             label = {
                 Text("Note")
@@ -99,13 +138,11 @@ fun AddTransactionScreen(
 
         Button(
             onClick = {
-                // Save transaction later
+                navHostController.popBackStack()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = "Save Transaction"
-            )
+            Text("Save Transaction")
         }
     }
 }
