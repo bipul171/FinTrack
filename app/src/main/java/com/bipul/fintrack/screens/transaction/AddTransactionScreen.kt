@@ -1,5 +1,6 @@
 package com.bipul.fintrack.screens.transaction
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +29,7 @@ fun AddTransactionScreen(
     navHostController: NavHostController
 ) {
 
+    val context = LocalContext.current
     var amount by remember {
         mutableStateOf("")
     }
@@ -138,7 +141,11 @@ fun AddTransactionScreen(
 
         Button(
             onClick = {
-                navHostController.popBackStack()
+                Toast.makeText(
+                    context,
+                    "Transaction saved successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
