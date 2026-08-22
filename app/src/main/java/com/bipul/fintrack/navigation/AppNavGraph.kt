@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.bipul.fintrack.screens.auth.ForgotPasswordScreen
 import com.bipul.fintrack.screens.auth.SignInScreen
 import com.bipul.fintrack.screens.auth.SignUpScreen
+import com.bipul.fintrack.screens.budget.AddBudgetScreen
 import com.bipul.fintrack.screens.budget.BudgetScreen
 import com.bipul.fintrack.screens.home.HomeScreen
 import com.bipul.fintrack.screens.splash.SplashScreen
@@ -62,7 +63,17 @@ fun WelcomeNavGraph(navController: NavHostController) {
         }
 
         composable(AppRoutes.Budget.route){
-            BudgetScreen()
+            BudgetScreen(
+                navController = navController
+            )
+        }
+
+        composable(
+            route = AppRoutes.AddBudget.route
+        ) {
+            AddBudgetScreen(
+                navController = navController
+            )
         }
 
         composable(AppRoutes.ForgotPassword.route) {
@@ -74,4 +85,8 @@ fun WelcomeNavGraph(navController: NavHostController) {
         }
 
     }
+
+
+
+
 }

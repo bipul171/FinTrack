@@ -379,16 +379,3 @@ fun AddBudgetScreen(
         }
     }
 }
-
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun AddBudgetScreenPreview() {
-
-    AddBudgetScreen(
-        navController = rememberNavController()
-    )
-}
