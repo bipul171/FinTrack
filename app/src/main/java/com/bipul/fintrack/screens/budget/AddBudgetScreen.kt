@@ -1,7 +1,6 @@
 package com.bipul.fintrack.screens.budget
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,8 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -29,19 +30,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddBudgetScreen(
     navController: NavHostController
 ) {
+
+    val context = LocalContext.current
 
     var selectedCategory by remember {
         mutableStateOf("")
@@ -92,6 +95,8 @@ fun AddBudgetScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
+
+            // Top Bar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -149,6 +154,7 @@ fun AddBudgetScreen(
                         modifier = Modifier.height(24.dp)
                     )
 
+                    // Category
                     Text(
                         text = "Category",
                         fontSize = 15.sp,
@@ -159,7 +165,11 @@ fun AddBudgetScreen(
                         modifier = Modifier.height(8.dp)
                     )
 
-                    Column(
+                    ExposedDropdownMenuBox(
+                        expanded = categoryExpanded,
+                        onExpandedChange = {
+                            categoryExpanded = !categoryExpanded
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
 
@@ -173,20 +183,17 @@ fun AddBudgetScreen(
                                 )
                             },
                             trailingIcon = {
-                                Text(
-                                    text = "▼",
-                                    modifier = Modifier.padding(end = 12.dp)
+                                ExposedDropdownMenuDefaults.TrailingIcon(
+                                    expanded = categoryExpanded
                                 )
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    categoryExpanded = true
-                                },
+                                .menuAnchor(),
                             singleLine = true
                         )
 
-                        DropdownMenu(
+                        ExposedDropdownMenu(
                             expanded = categoryExpanded,
                             onDismissRequest = {
                                 categoryExpanded = false
@@ -202,6 +209,7 @@ fun AddBudgetScreen(
                                         )
                                     },
                                     onClick = {
+
                                         selectedCategory = category
                                         categoryExpanded = false
                                         errorMessage = ""
@@ -215,6 +223,7 @@ fun AddBudgetScreen(
                         modifier = Modifier.height(20.dp)
                     )
 
+                    // Budget Amount
                     Text(
                         text = "Budget Amount",
                         fontSize = 15.sp,
@@ -252,6 +261,7 @@ fun AddBudgetScreen(
                         modifier = Modifier.height(20.dp)
                     )
 
+                    // Month
                     Text(
                         text = "Month",
                         fontSize = 15.sp,
@@ -262,7 +272,11 @@ fun AddBudgetScreen(
                         modifier = Modifier.height(8.dp)
                     )
 
-                    Column(
+                    ExposedDropdownMenuBox(
+                        expanded = monthExpanded,
+                        onExpandedChange = {
+                            monthExpanded = !monthExpanded
+                        },
                         modifier = Modifier.fillMaxWidth()
                     ) {
 
@@ -271,20 +285,17 @@ fun AddBudgetScreen(
                             onValueChange = {},
                             readOnly = true,
                             trailingIcon = {
-                                Text(
-                                    text = "▼",
-                                    modifier = Modifier.padding(end = 12.dp)
+                                ExposedDropdownMenuDefaults.TrailingIcon(
+                                    expanded = monthExpanded
                                 )
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    monthExpanded = true
-                                },
+                                .menuAnchor(),
                             singleLine = true
                         )
 
-                        DropdownMenu(
+                        ExposedDropdownMenu(
                             expanded = monthExpanded,
                             onDismissRequest = {
                                 monthExpanded = false
@@ -300,6 +311,7 @@ fun AddBudgetScreen(
                                         )
                                     },
                                     onClick = {
+
                                         selectedMonth = month
                                         monthExpanded = false
                                     }
@@ -312,7 +324,7 @@ fun AddBudgetScreen(
                         modifier = Modifier.height(12.dp)
                     )
 
-                    // Validation message
+                    // Validation
                     if (errorMessage.isNotEmpty()) {
 
                         Text(
@@ -328,6 +340,8 @@ fun AddBudgetScreen(
                     Spacer(
                         modifier = Modifier.height(16.dp)
                     )
+
+                    // Save Budget
                     Button(
                         onClick = {
 
@@ -354,12 +368,14 @@ fun AddBudgetScreen(
                                 }
 
                                 else -> {
-                                    /*
-                                     * Database integration will be added later.
-                                     *
-                                     * For now, simply return to
-                                     * the Budget screen.
-                                     */
+
+                                    Toast.makeText(
+                                        context,
+                                        "Budget added successfully",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+
+                                    // Database integration will be added later.
                                     navController.popBackStack()
                                 }
                             }
