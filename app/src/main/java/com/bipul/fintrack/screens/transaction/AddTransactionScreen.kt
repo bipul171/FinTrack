@@ -140,7 +140,7 @@ fun AddTransactionScreen(
         )
 
         Button(
-            onClick = {
+            onClick = { navHostController.popBackStack()
                 Toast.makeText(
                     context,
                     "Transaction saved successfully",
