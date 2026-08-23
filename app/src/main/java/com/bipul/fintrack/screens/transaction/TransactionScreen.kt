@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.bipul.fintrack.navigation.AppRoutes
 
 @Composable
 fun TransactionScreen(navHostController : NavHostController) {
@@ -36,7 +37,9 @@ fun TransactionScreen(navHostController : NavHostController) {
         }
         item {
             Button(
-                onClick = { },
+                onClick = {
+                    navHostController.navigate(AppRoutes.AddTransaction.route)
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(

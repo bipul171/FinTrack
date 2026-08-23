@@ -11,6 +11,7 @@ import com.bipul.fintrack.screens.budget.AddBudgetScreen
 import com.bipul.fintrack.screens.budget.BudgetScreen
 import com.bipul.fintrack.screens.home.HomeScreen
 import com.bipul.fintrack.screens.splash.SplashScreen
+import com.bipul.fintrack.screens.transaction.AddTransactionScreen
 import com.bipul.fintrack.screens.transaction.TransactionScreen
 import com.bipul.fintrack.screens.welcome.WelcomeScreenOne
 import com.bipul.fintrack.screens.welcome.WelcomeScreenTwo
@@ -81,6 +82,12 @@ fun WelcomeNavGraph(navController: NavHostController) {
                 onBackClick = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(AppRoutes.AddTransaction.route) {
+            AddTransactionScreen(
+                navHostController = navController
             )
         }
 
