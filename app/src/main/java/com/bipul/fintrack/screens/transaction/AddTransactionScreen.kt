@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -26,7 +27,8 @@ import androidx.navigation.NavHostController
 
 @Composable
 fun AddTransactionScreen(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    viewModel: TransactionViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
@@ -140,12 +142,32 @@ fun AddTransactionScreen(
         )
 
         Button(
-            onClick = { navHostController.popBackStack()
+            onClick = {
+
+                val amountValue = amount.toDoubleOrNull()
+
+                if (amountValue == null || amountValue <= 0) {
+                    Toast.makeText(
+                        context,
+                        "Please enter a valid amount",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@Button
+                }
+
+                viewModel.addTransaction(
+                    amount = amountValue,
+                    transactionType = transactionType,
+                    note = note
+                )
+
                 Toast.makeText(
                     context,
                     "Transaction saved successfully",
                     Toast.LENGTH_SHORT
                 ).show()
+
+                navHostController.popBackStack()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
