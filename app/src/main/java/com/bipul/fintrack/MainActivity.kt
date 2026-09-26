@@ -7,15 +7,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.bipul.fintrack.navigation.WelcomeNavGraph
 import com.bipul.fintrack.ui.theme.FinTrackTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
+
         setContent {
             FinTrackTheme {
                 val navController = rememberNavController()
-                WelcomeNavGraph(navController = navController)
+
+                WelcomeNavGraph(
+                    navController = navController
+                )
             }
         }
     }
