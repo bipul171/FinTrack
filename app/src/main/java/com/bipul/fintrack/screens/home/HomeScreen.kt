@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
@@ -26,22 +27,26 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.material3.AlertDialog
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-
+import com.bipul.fintrack.data.local.entity.TransactionEntity
+import com.bipul.fintrack.screens.transaction.TransactionViewModel
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
+fun HomeScreen(
+    navController: NavHostController,
+    viewModel: TransactionViewModel = hiltViewModel()
+) {
 
     var showIncomeDialog by remember {
         mutableStateOf(false)
@@ -51,31 +56,46 @@ fun HomeScreen(navController: NavHostController) {
         mutableStateOf(false)
     }
 
-    var totalIncome by remember {
-        mutableStateOf(40000.0)
-    }
+    val transactions by viewModel.transactions.collectAsState(
+        initial = emptyList()
+    )
 
-    var totalExpense by remember {
-        mutableStateOf(15000.0)
-    }
+    val totalIncome = transactions
+        .filter {
+            it.transactionType.equals("Income", ignoreCase = true)
+        }
+        .sumOf {
+            it.amount
+        }
+
+    val totalExpense = transactions
+        .filter {
+            it.transactionType.equals("Expense", ignoreCase = true)
+        }
+        .sumOf {
+            it.amount
+        }
 
     val totalBalance = totalIncome - totalExpense
 
-    val context = LocalContext.current
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     Scaffold(
         bottomBar = {
-            NavigationBar{
+            NavigationBar {
+
                 NavigationBarItem(
                     selected = true,
-                    onClick = { },
+                    onClick = {},
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Home,
                             contentDescription = "Home"
                         )
                     },
-                    label = { Text(text = "Home") }
+                    label = {
+                        Text(text = "Home")
+                    }
                 )
 
                 NavigationBarItem(
@@ -89,8 +109,11 @@ fun HomeScreen(navController: NavHostController) {
                             contentDescription = "Transactions"
                         )
                     },
-                    label = { Text(text = "Transactions") }
+                    label = {
+                        Text(text = "Transactions")
+                    }
                 )
+
                 NavigationBarItem(
                     selected = false,
                     onClick = {
@@ -102,12 +125,14 @@ fun HomeScreen(navController: NavHostController) {
                             contentDescription = "Budget"
                         )
                     },
-                    label = { Text(text  = "Budget")}
+                    label = {
+                        Text(text = "Budget")
+                    }
                 )
-
             }
         }
     ) { innerPadding ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -116,13 +141,14 @@ fun HomeScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-
             item {
                 HomeHeader()
             }
 
             item {
-                TotalBalanceCard(totalBalance)
+                TotalBalanceCard(
+                    balance = totalBalance
+                )
             }
 
             item {
@@ -134,17 +160,21 @@ fun HomeScreen(navController: NavHostController) {
 
             item {
                 QuickActionsSection(
-                    onIncomeClick = { showIncomeDialog = true },
-                    onExpenseClick = { showExpenseDialog = true }
+                    onIncomeClick = {
+                        showIncomeDialog = true
+                    },
+                    onExpenseClick = {
+                        showExpenseDialog = true
+                    }
                 )
             }
 
             item {
-                RecentTransactionsSection()
+                RecentTransactionsSection(
+                    transactions = transactions
+                )
             }
-
         }
-
     }
 
     if (showIncomeDialog) {
@@ -156,8 +186,6 @@ fun HomeScreen(navController: NavHostController) {
                 showIncomeDialog = false
             },
             onConfirm = { amount ->
-
-                totalIncome += amount
 
                 showIncomeDialog = false
 
@@ -180,9 +208,6 @@ fun HomeScreen(navController: NavHostController) {
             },
             onConfirm = { amount ->
 
-                totalExpense += amount
-
-
                 showExpenseDialog = false
 
                 Toast.makeText(
@@ -193,30 +218,32 @@ fun HomeScreen(navController: NavHostController) {
             }
         )
     }
-
 }
-
 
 @Composable
 fun HomeHeader() {
+
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Column {
+
             Text(
                 text = "Good Evening,",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
+
             Text(
                 text = "Md. Bipul Mia",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
         }
+
         Text(
             text = "🔔",
             fontSize = 28.sp
@@ -225,18 +252,22 @@ fun HomeHeader() {
 }
 
 @Composable
-fun TotalBalanceCard(balance: Double) {
+fun TotalBalanceCard(
+    balance: Double
+) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp)
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
             Text(
                 text = "Total Balance",
                 fontSize = 16.sp,
@@ -255,42 +286,45 @@ fun TotalBalanceCard(balance: Double) {
         }
     }
 }
+
 @Composable
 fun IncomeExpenseSection(
     income: Double,
     expense: Double
 ) {
 
-
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+
         Card(
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(20.dp)
         ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Text(
                     text = "Income",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Text(
                     text = "৳ ${income.toInt()}",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
-
             }
         }
 
@@ -300,28 +334,31 @@ fun IncomeExpenseSection(
                 .padding(end = 8.dp),
             shape = RoundedCornerShape(20.dp)
         ) {
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Text(
                     text = "Expense",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
+
                 Text(
                     text = "৳ ${expense.toInt()}",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
-
             }
         }
-
-
     }
 }
 
@@ -436,73 +473,100 @@ fun AmountDialog(
 }
 
 @Composable
-fun RecentTransactionsSection() {
+fun RecentTransactionsSection(
+    transactions: List<TransactionEntity>
+) {
+
+    val recentTransactions = transactions
+        .sortedByDescending { it.date }
+        .take(5)
+
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-    ){
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
         Text(
             text = "Recent Transactions",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
     }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(size = 20.dp)
+        shape = RoundedCornerShape(20.dp)
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            TransactionItem(
-                title = "Food",
-                amount = "-৳ 500",
-            )
 
-            HorizontalDivider()
+            if (recentTransactions.isEmpty()) {
 
-            TransactionItem(
-                title = "Salary",
-                amount = "+৳ 30,000",
-            )
+                Text(
+                    text = "No transactions yet.",
+                    fontSize = 16.sp
+                )
 
-            HorizontalDivider()
+            } else {
 
-            TransactionItem(
-                title = "Transport",
-                amount = "-৳ 100",
-            )
-            HorizontalDivider()
+                recentTransactions.forEachIndexed { index, transaction ->
 
-            TransactionItem(
-                title = "Personal Cost",
-                amount = "-৳ 100",
-            )
+                    val sign =
+                        if (transaction.transactionType.equals(
+                                "Income",
+                                ignoreCase = true
+                            )
+                        ) {
+                            "+"
+                        } else {
+                            "-"
+                        }
+
+                    val title = transaction.note.ifBlank {
+                        transaction.transactionType
+                    }
+
+                    TransactionItem(
+                        title = title,
+                        amount = "$sign৳ ${transaction.amount.toInt()}"
+                    )
+
+                    if (index < recentTransactions.lastIndex) {
+                        HorizontalDivider()
+                    }
+                }
+            }
         }
     }
-
 }
 
 @Composable
-fun TransactionItem(title: String, amount: String) {
-
+fun TransactionItem(
+    title: String,
+    amount: String
+) {
 
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Text(
             text = title,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )
+
         Text(
             text = amount,
             fontSize = 16.sp,
@@ -510,5 +574,3 @@ fun TransactionItem(title: String, amount: String) {
         )
     }
 }
-
-
