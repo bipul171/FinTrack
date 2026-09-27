@@ -8,21 +8,30 @@ class TransactionRepository(
     private val transactionDao: TransactionDao
 ) {
 
-    suspend fun insertTransaction(transaction: TransactionEntity) {
+    suspend fun insertTransaction(
+        transaction: TransactionEntity
+    ) =
         transactionDao.insertTransaction(transaction)
-    }
 
-    suspend fun deleteTransaction(transaction: TransactionEntity) {
+    suspend fun deleteTransaction(
+        transaction: TransactionEntity
+    ) =
         transactionDao.deleteTransaction(transaction)
-    }
 
-    fun getAllTransactions(): Flow<List<TransactionEntity>> {
-        return transactionDao.getAllTransactions()
-    }
+    fun getAllTransactions(): Flow<List<TransactionEntity>> =
+        transactionDao.getAllTransactions()
 
     fun getExpenseByCategory(
         categoryId: Long
-    ): Flow<Double> {
-        return transactionDao.getExpenseByCategory(categoryId)
-    }
+    ): Flow<Double> =
+        transactionDao.getExpenseByCategory(categoryId)
+
+    fun getTransactionsBetween(
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<TransactionEntity>> =
+        transactionDao.getTransactionsBetween(
+            startDate,
+            endDate
+        )
 }

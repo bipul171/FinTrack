@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +26,11 @@ class BudgetViewModel @Inject constructor(
         repository.getAllBudgets()
 
     val categoryExpenses: StateFlow<Map<Long, Double>> =
-        transactionRepository.getAllTransactions()
+        transactionRepository
+            .getTransactionsBetween(
+                startDate = getStartOfCurrentMonth(),
+                endDate = getStartOfNextMonth()
+            )
             .map { transactions ->
 
                 transactions
@@ -70,5 +76,34 @@ class BudgetViewModel @Inject constructor(
         viewModelScope.launch {
             repository.deleteBudget(budget)
         }
+    }
+
+    private fun getStartOfCurrentMonth(): Long {
+
+        val startOfMonth = LocalDate
+            .now()
+            .withDayOfMonth(1)
+
+        return startOfMonth
+            .atStartOfDay(
+                ZoneId.systemDefault()
+            )
+            .toInstant()
+            .toEpochMilli()
+    }
+
+    private fun getStartOfNextMonth(): Long {
+
+        val startOfNextMonth = LocalDate
+            .now()
+            .withDayOfMonth(1)
+            .plusMonths(1)
+
+        return startOfNextMonth
+            .atStartOfDay(
+                ZoneId.systemDefault()
+            )
+            .toInstant()
+            .toEpochMilli()
     }
 }

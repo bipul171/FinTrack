@@ -28,4 +28,15 @@ interface TransactionDao {
     fun getExpenseByCategory(
         categoryId: Long
     ): Flow<Double>
+
+    @Query("""
+        SELECT * FROM transactions
+        WHERE date >= :startDate
+        AND date < :endDate
+        ORDER BY date DESC
+    """)
+    fun getTransactionsBetween(
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<TransactionEntity>>
 }

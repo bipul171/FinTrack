@@ -7,6 +7,8 @@ import com.bipul.fintrack.data.repository.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,6 +18,12 @@ class TransactionViewModel @Inject constructor(
 
     val transactions: Flow<List<TransactionEntity>> =
         repository.getAllTransactions()
+
+    val currentMonthTransactions: Flow<List<TransactionEntity>> =
+        repository.getTransactionsBetween(
+            startDate = getStartOfCurrentMonth(),
+            endDate = getStartOfNextMonth()
+        )
 
     fun addTransaction(
         amount: Double,
@@ -38,9 +46,40 @@ class TransactionViewModel @Inject constructor(
         }
     }
 
-    fun deleteTransaction(transaction: TransactionEntity) {
+    fun deleteTransaction(
+        transaction: TransactionEntity
+    ) {
         viewModelScope.launch {
             repository.deleteTransaction(transaction)
         }
+    }
+
+    private fun getStartOfCurrentMonth(): Long {
+
+        val startOfMonth = LocalDate
+            .now()
+            .withDayOfMonth(1)
+
+        return startOfMonth
+            .atStartOfDay(
+                ZoneId.systemDefault()
+            )
+            .toInstant()
+            .toEpochMilli()
+    }
+
+    private fun getStartOfNextMonth(): Long {
+
+        val startOfNextMonth = LocalDate
+            .now()
+            .withDayOfMonth(1)
+            .plusMonths(1)
+
+        return startOfNextMonth
+            .atStartOfDay(
+                ZoneId.systemDefault()
+            )
+            .toInstant()
+            .toEpochMilli()
     }
 }
