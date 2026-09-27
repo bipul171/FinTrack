@@ -18,6 +18,9 @@ import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -34,12 +37,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.bipul.fintrack.data.local.entity.CategoryEntity
 import com.bipul.fintrack.data.local.entity.TransactionEntity
+import com.bipul.fintrack.screens.category.CategoryViewModel
 import com.bipul.fintrack.screens.transaction.TransactionViewModel
 
 @Composable
@@ -47,7 +53,6 @@ fun HomeScreen(
     navController: NavHostController,
     viewModel: TransactionViewModel = hiltViewModel()
 ) {
-
     var showIncomeDialog by remember {
         mutableStateOf(false)
     }
@@ -60,9 +65,18 @@ fun HomeScreen(
         initial = emptyList()
     )
 
+    val categoryViewModel: CategoryViewModel = hiltViewModel()
+
+    val categories by categoryViewModel.categories.collectAsState(
+        initial = emptyList()
+    )
+
     val totalIncome = transactions
         .filter {
-            it.transactionType.equals("Income", ignoreCase = true)
+            it.transactionType.equals(
+                "Income",
+                ignoreCase = true
+            )
         }
         .sumOf {
             it.amount
@@ -70,7 +84,10 @@ fun HomeScreen(
 
     val totalExpense = transactions
         .filter {
-            it.transactionType.equals("Expense", ignoreCase = true)
+            it.transactionType.equals(
+                "Expense",
+                ignoreCase = true
+            )
         }
         .sumOf {
             it.amount
@@ -78,7 +95,7 @@ fun HomeScreen(
 
     val totalBalance = totalIncome - totalExpense
 
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
 
     Scaffold(
         bottomBar = {
@@ -94,7 +111,9 @@ fun HomeScreen(
                         )
                     },
                     label = {
-                        Text(text = "Home")
+                        Text(
+                            text = "Home"
+                        )
                     }
                 )
 
@@ -110,7 +129,9 @@ fun HomeScreen(
                         )
                     },
                     label = {
-                        Text(text = "Transactions")
+                        Text(
+                            text = "Transactions"
+                        )
                     }
                 )
 
@@ -126,7 +147,9 @@ fun HomeScreen(
                         )
                     },
                     label = {
-                        Text(text = "Budget")
+                        Text(
+                            text = "Budget"
+                        )
                     }
                 )
             }
@@ -177,6 +200,7 @@ fun HomeScreen(
         }
     }
 
+    // Income Dialog
     if (showIncomeDialog) {
 
         AmountDialog(
@@ -186,6 +210,12 @@ fun HomeScreen(
                 showIncomeDialog = false
             },
             onConfirm = { amount ->
+
+                viewModel.addTransaction(
+                    amount = amount,
+                    transactionType = "Income",
+                    note = "Quick Income"
+                )
 
                 showIncomeDialog = false
 
@@ -198,15 +228,22 @@ fun HomeScreen(
         )
     }
 
+    // Expense Dialog
     if (showExpenseDialog) {
 
-        AmountDialog(
-            title = "Add Expense",
-            confirmText = "Add Expense",
+        ExpenseDialog(
+            categories = categories,
             onDismiss = {
                 showExpenseDialog = false
             },
-            onConfirm = { amount ->
+            onConfirm = { amount, categoryId ->
+
+                viewModel.addTransaction(
+                    amount = amount,
+                    transactionType = "Expense",
+                    note = "Quick Expense",
+                    categoryId = categoryId
+                )
 
                 showExpenseDialog = false
 
@@ -219,6 +256,7 @@ fun HomeScreen(
         )
     }
 }
+
 
 @Composable
 fun HomeHeader() {
@@ -251,6 +289,7 @@ fun HomeHeader() {
     }
 }
 
+
 @Composable
 fun TotalBalanceCard(
     balance: Double
@@ -279,13 +318,14 @@ fun TotalBalanceCard(
             )
 
             Text(
-                text = "৳ ${balance.toInt()}",
+                text = "৳ ${"%.2f".format(balance)}",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
         }
     }
 }
+
 
 @Composable
 fun IncomeExpenseSection(
@@ -321,7 +361,7 @@ fun IncomeExpenseSection(
                 )
 
                 Text(
-                    text = "৳ ${income.toInt()}",
+                    text = "৳ ${"%.2f".format(income)}",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -353,7 +393,7 @@ fun IncomeExpenseSection(
                 )
 
                 Text(
-                    text = "৳ ${expense.toInt()}",
+                    text = "৳ ${"%.2f".format(expense)}",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -361,6 +401,7 @@ fun IncomeExpenseSection(
         }
     }
 }
+
 
 @Composable
 fun QuickActionsSection(
@@ -392,6 +433,7 @@ fun QuickActionsSection(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(16.dp)
             ) {
+
                 Text(
                     text = "+ Income",
                     fontSize = 16.sp
@@ -403,6 +445,7 @@ fun QuickActionsSection(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(16.dp)
             ) {
+
                 Text(
                     text = "- Expense",
                     fontSize = 16.sp
@@ -411,6 +454,7 @@ fun QuickActionsSection(
         }
     }
 }
+
 
 @Composable
 fun AmountDialog(
@@ -428,19 +472,26 @@ fun AmountDialog(
         onDismissRequest = onDismiss,
 
         title = {
-            Text(text = title)
+            Text(
+                text = title
+            )
         },
 
         text = {
 
             OutlinedTextField(
                 value = amountText,
+
                 onValueChange = {
                     amountText = it
                 },
+
                 label = {
-                    Text(text = "Amount")
+                    Text(
+                        text = "Amount"
+                    )
                 },
+
                 singleLine = true
             )
         },
@@ -450,14 +501,21 @@ fun AmountDialog(
             Button(
                 onClick = {
 
-                    val amount = amountText.toDoubleOrNull()
+                    val amount =
+                        amountText.toDoubleOrNull()
 
-                    if (amount != null && amount > 0) {
+                    if (
+                        amount != null &&
+                        amount > 0
+                    ) {
                         onConfirm(amount)
                     }
                 }
             ) {
-                Text(text = confirmText)
+
+                Text(
+                    text = confirmText
+                )
             }
         },
 
@@ -466,11 +524,196 @@ fun AmountDialog(
             OutlinedButton(
                 onClick = onDismiss
             ) {
-                Text(text = "Cancel")
+
+                Text(
+                    text = "Cancel"
+                )
             }
         }
     )
 }
+
+
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@Composable
+fun ExpenseDialog(
+    categories: List<CategoryEntity>,
+    onDismiss: () -> Unit,
+    onConfirm: (Double, Long) -> Unit
+) {
+
+    var amountText by remember {
+        mutableStateOf("")
+    }
+
+    var selectedCategory by remember {
+        mutableStateOf("")
+    }
+
+    var selectedCategoryId by remember {
+        mutableStateOf<Long?>(null)
+    }
+
+    var categoryExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    val expenseCategories = categories.filter {
+        it.type.equals(
+            "Expense",
+            ignoreCase = true
+        )
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+
+        title = {
+            Text(
+                text = "Add Expense"
+            )
+        },
+
+        text = {
+
+            Column {
+
+                OutlinedTextField(
+                    value = amountText,
+
+                    onValueChange = {
+                        amountText = it
+                    },
+
+                    label = {
+                        Text(
+                            text = "Amount"
+                        )
+                    },
+
+                    singleLine = true,
+
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+
+                ExposedDropdownMenuBox(
+                    expanded = categoryExpanded,
+
+                    onExpandedChange = {
+                        categoryExpanded = !categoryExpanded
+                    }
+                ) {
+
+                    OutlinedTextField(
+                        value = selectedCategory,
+
+                        onValueChange = {},
+
+                        readOnly = true,
+
+                        label = {
+                            Text(
+                                text = "Category"
+                            )
+                        },
+
+                        placeholder = {
+                            Text(
+                                text = "Select category"
+                            )
+                        },
+
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = categoryExpanded
+                            )
+                        },
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = categoryExpanded,
+
+                        onDismissRequest = {
+                            categoryExpanded = false
+                        }
+                    ) {
+
+                        expenseCategories.forEach { category ->
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = category.name
+                                    )
+                                },
+
+                                onClick = {
+
+                                    selectedCategory =
+                                        category.name
+
+                                    selectedCategoryId =
+                                        category.categoryId
+
+                                    categoryExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        },
+
+        confirmButton = {
+
+            Button(
+                onClick = {
+
+                    val amount =
+                        amountText.toDoubleOrNull()
+
+                    if (
+                        amount != null &&
+                        amount > 0 &&
+                        selectedCategoryId != null
+                    ) {
+
+                        onConfirm(
+                            amount,
+                            selectedCategoryId!!
+                        )
+                    }
+                }
+            ) {
+
+                Text(
+                    text = "Add Expense"
+                )
+            }
+        },
+
+        dismissButton = {
+
+            OutlinedButton(
+                onClick = onDismiss
+            ) {
+
+                Text(
+                    text = "Cancel"
+                )
+            }
+        }
+    )
+}
+
 
 @Composable
 fun RecentTransactionsSection(
@@ -478,7 +721,9 @@ fun RecentTransactionsSection(
 ) {
 
     val recentTransactions = transactions
-        .sortedByDescending { it.date }
+        .sortedByDescending {
+            it.date
+        }
         .take(5)
 
     Column(
@@ -494,58 +739,66 @@ fun RecentTransactionsSection(
         Spacer(
             modifier = Modifier.height(8.dp)
         )
-    }
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp)
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp)
         ) {
 
-            if (recentTransactions.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
 
-                Text(
-                    text = "No transactions yet.",
-                    fontSize = 16.sp
-                )
+                if (recentTransactions.isEmpty()) {
 
-            } else {
-
-                recentTransactions.forEachIndexed { index, transaction ->
-
-                    val sign =
-                        if (transaction.transactionType.equals(
-                                "Income",
-                                ignoreCase = true
-                            )
-                        ) {
-                            "+"
-                        } else {
-                            "-"
-                        }
-
-                    val title = transaction.note.ifBlank {
-                        transaction.transactionType
-                    }
-
-                    TransactionItem(
-                        title = title,
-                        amount = "$sign৳ ${transaction.amount.toInt()}"
+                    Text(
+                        text = "No transactions yet.",
+                        fontSize = 16.sp
                     )
 
-                    if (index < recentTransactions.lastIndex) {
-                        HorizontalDivider()
+                } else {
+
+                    recentTransactions.forEachIndexed {
+                            index,
+                            transaction ->
+
+                        val sign =
+                            if (
+                                transaction.transactionType.equals(
+                                    "Income",
+                                    ignoreCase = true
+                                )
+                            ) {
+                                "+"
+                            } else {
+                                "-"
+                            }
+
+                        val title =
+                            transaction.note.ifBlank {
+                                transaction.transactionType
+                            }
+
+                        TransactionItem(
+                            title = title,
+                            amount = "$sign৳ ${"%.2f".format(transaction.amount)}"
+                        )
+
+                        if (
+                            index <
+                            recentTransactions.lastIndex
+                        ) {
+                            HorizontalDivider()
+                        }
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun TransactionItem(
@@ -557,8 +810,12 @@ fun TransactionItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+
+        horizontalArrangement =
+            Arrangement.SpaceBetween,
+
+        verticalAlignment =
+            Alignment.CenterVertically
     ) {
 
         Text(
