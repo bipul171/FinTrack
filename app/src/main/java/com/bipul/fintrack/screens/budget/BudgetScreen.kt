@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -27,8 +26,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.bipul.fintrack.data.local.entity.BudgetEntity
+import com.bipul.fintrack.data.local.entity.CategoryEntity
 import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.screens.category.CategoryViewModel
+
 
 @Composable
 fun BudgetScreen(
@@ -36,6 +37,7 @@ fun BudgetScreen(
 ) {
 
     val budgetViewModel: BudgetViewModel = hiltViewModel()
+
     val categoryViewModel: CategoryViewModel = hiltViewModel()
 
     val budgets by budgetViewModel.budgets.collectAsState(
@@ -46,6 +48,9 @@ fun BudgetScreen(
         initial = emptyList()
     )
 
+    val categoryExpenses by budgetViewModel.categoryExpenses
+        .collectAsState()
+
     val categoryMap = categories.associateBy {
         it.categoryId
     }
@@ -53,6 +58,20 @@ fun BudgetScreen(
     val totalBudget = budgets.sumOf {
         it.amount
     }
+
+    val totalSpent = categoryExpenses.values.sum()
+
+    val remaining = (totalBudget - totalSpent)
+        .coerceAtLeast(0.0)
+
+    val overallProgress =
+        if (totalBudget > 0) {
+            (totalSpent / totalBudget)
+                .coerceIn(0.0, 1.0)
+                .toFloat()
+        } else {
+            0f
+        }
 
     LazyColumn(
         modifier = Modifier
@@ -62,6 +81,7 @@ fun BudgetScreen(
     ) {
 
         item {
+
             Text(
                 text = "Budget",
                 fontSize = 28.sp,
@@ -70,25 +90,34 @@ fun BudgetScreen(
         }
 
         item {
+
             BudgetSummaryCard(
-                totalBudget = totalBudget
+                totalBudget = totalBudget,
+                totalSpent = totalSpent,
+                remaining = remaining
             )
         }
 
         item {
+
             BudgetOverviewSection(
-                totalBudget = totalBudget
+                totalBudget = totalBudget,
+                totalSpent = totalSpent,
+                progress = overallProgress
             )
         }
 
         item {
+
             CategoryBudgetSection(
                 budgets = budgets,
-                categoryMap = categoryMap
+                categoryMap = categoryMap,
+                categoryExpenses = categoryExpenses
             )
         }
 
         item {
+
             Button(
                 onClick = {
                     navController.navigate(
@@ -97,6 +126,7 @@ fun BudgetScreen(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Text(
                     text = "+ Add Budget"
                 )
@@ -108,7 +138,9 @@ fun BudgetScreen(
 
 @Composable
 fun BudgetSummaryCard(
-    totalBudget: Double
+    totalBudget: Double,
+    totalSpent: Double,
+    remaining: Double
 ) {
 
     Card(
@@ -159,7 +191,7 @@ fun BudgetSummaryCard(
                     )
 
                     Text(
-                        text = "৳ 0.00",
+                        text = "৳ ${"%.2f".format(totalSpent)}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -179,7 +211,7 @@ fun BudgetSummaryCard(
                     )
 
                     Text(
-                        text = "৳ ${"%.2f".format(totalBudget)}",
+                        text = "৳ ${"%.2f".format(remaining)}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -192,8 +224,13 @@ fun BudgetSummaryCard(
 
 @Composable
 fun BudgetOverviewSection(
-    totalBudget: Double
+    totalBudget: Double,
+    totalSpent: Double,
+    progress: Float
 ) {
+
+    val percentage =
+        (progress * 100).toInt()
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -233,7 +270,7 @@ fun BudgetOverviewSection(
                     )
 
                     Text(
-                        text = "0% Used",
+                        text = "$percentage% Used",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -244,7 +281,7 @@ fun BudgetOverviewSection(
                 )
 
                 LinearProgressIndicator(
-                    progress = { 0f },
+                    progress = { progress },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(10.dp),
@@ -256,7 +293,7 @@ fun BudgetOverviewSection(
                 )
 
                 Text(
-                    text = "৳ 0.00 of ৳ ${"%.2f".format(totalBudget)} spent",
+                    text = "৳ ${"%.2f".format(totalSpent)} of ৳ ${"%.2f".format(totalBudget)} spent",
                     fontSize = 14.sp
                 )
             }
@@ -268,7 +305,8 @@ fun BudgetOverviewSection(
 @Composable
 fun CategoryBudgetSection(
     budgets: List<BudgetEntity>,
-    categoryMap: Map<Long, com.bipul.fintrack.data.local.entity.CategoryEntity>
+    categoryMap: Map<Long, CategoryEntity>,
+    categoryExpenses: Map<Long, Double>
 ) {
 
     Column(
@@ -300,10 +338,24 @@ fun CategoryBudgetSection(
                     categoryMap[budget.categoryId]?.name
                         ?: "Unknown Category"
 
+                val spentAmount =
+                    categoryExpenses[budget.categoryId]
+                        ?: 0.0
+
+                val progress =
+                    if (budget.amount > 0) {
+                        (spentAmount / budget.amount)
+                            .coerceIn(0.0, 1.0)
+                            .toFloat()
+                    } else {
+                        0f
+                    }
+
                 BudgetCategoryItem(
                     categoryName = categoryName,
-                    spentAmount = 0.0,
-                    budgetAmount = budget.amount
+                    spentAmount = "৳ ${"%.2f".format(spentAmount)}",
+                    budgetAmount = "৳ ${"%.2f".format(budget.amount)}",
+                    progress = progress
                 )
 
                 Spacer(
@@ -318,17 +370,10 @@ fun CategoryBudgetSection(
 @Composable
 fun BudgetCategoryItem(
     categoryName: String,
-    spentAmount: Double,
-    budgetAmount: Double
+    spentAmount: String,
+    budgetAmount: String,
+    progress: Float
 ) {
-
-    val progress = if (budgetAmount > 0) {
-        (spentAmount / budgetAmount)
-            .coerceIn(0.0, 1.0)
-            .toFloat()
-    } else {
-        0f
-    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -354,7 +399,7 @@ fun BudgetCategoryItem(
                 )
 
                 Text(
-                    text = "৳ ${"%.2f".format(spentAmount)} / ৳ ${"%.2f".format(budgetAmount)}",
+                    text = "$spentAmount / $budgetAmount",
                     fontSize = 14.sp
                 )
             }

@@ -4,18 +4,48 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bipul.fintrack.data.local.entity.BudgetEntity
 import com.bipul.fintrack.data.repository.BudgetRepository
+import com.bipul.fintrack.data.repository.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BudgetViewModel @Inject constructor(
-    private val repository: BudgetRepository
+    private val repository: BudgetRepository,
+    private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
     val budgets: Flow<List<BudgetEntity>> =
         repository.getAllBudgets()
+
+    val categoryExpenses: StateFlow<Map<Long, Double>> =
+        transactionRepository.getAllTransactions()
+            .map { transactions ->
+
+                transactions
+                    .filter {
+                        it.transactionType == "Expense" &&
+                                it.categoryId != null
+                    }
+                    .groupBy {
+                        it.categoryId!!
+                    }
+                    .mapValues { entry ->
+                        entry.value.sumOf {
+                            it.amount
+                        }
+                    }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = emptyMap()
+            )
 
     fun addBudget(
         categoryId: Long,

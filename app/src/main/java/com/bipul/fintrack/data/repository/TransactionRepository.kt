@@ -19,4 +19,10 @@ class TransactionRepository(
     fun getAllTransactions(): Flow<List<TransactionEntity>> {
         return transactionDao.getAllTransactions()
     }
+
+    fun getExpenseByCategory(
+        categoryId: Long
+    ): Flow<Double> {
+        return transactionDao.getExpenseByCategory(categoryId)
+    }
 }

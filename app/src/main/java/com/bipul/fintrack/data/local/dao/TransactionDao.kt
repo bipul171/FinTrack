@@ -18,4 +18,14 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
+
+    @Query("""
+        SELECT COALESCE(SUM(amount), 0)
+        FROM transactions
+        WHERE categoryId = :categoryId
+        AND transactionType = 'Expense'
+    """)
+    fun getExpenseByCategory(
+        categoryId: Long
+    ): Flow<Double>
 }
