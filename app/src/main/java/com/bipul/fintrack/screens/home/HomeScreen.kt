@@ -194,7 +194,8 @@ fun HomeScreen(
 
             item {
                 RecentTransactionsSection(
-                    transactions = transactions
+                    transactions = transactions,
+                    categoryMap = categories.associateBy { it.categoryId }
                 )
             }
         }
@@ -717,7 +718,8 @@ fun ExpenseDialog(
 
 @Composable
 fun RecentTransactionsSection(
-    transactions: List<TransactionEntity>
+    transactions: List<TransactionEntity>,
+    categoryMap: Map<Long, CategoryEntity>
 ) {
 
     val recentTransactions = transactions
@@ -781,8 +783,14 @@ fun RecentTransactionsSection(
                                 transaction.transactionType
                             }
 
+                        val categoryName =
+                            transaction.categoryId?.let { categoryId ->
+                                categoryMap[categoryId]?.name
+                            }
+
                         TransactionItem(
                             title = title,
+                            category = categoryName,
                             amount = "$sign৳ ${"%.2f".format(transaction.amount)}"
                         )
 
@@ -803,6 +811,7 @@ fun RecentTransactionsSection(
 @Composable
 fun TransactionItem(
     title: String,
+    category: String?,
     amount: String
 ) {
 
@@ -818,11 +827,26 @@ fun TransactionItem(
             Alignment.CenterVertically
     ) {
 
-        Text(
-            text = title,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
-        )
+        Column {
+
+            Text(
+                text = title,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+
+            if (category != null) {
+
+                Spacer(
+                    modifier = Modifier.height(2.dp)
+                )
+
+                Text(
+                    text = "Category: $category",
+                    fontSize = 13.sp
+                )
+            }
+        }
 
         Text(
             text = amount,
