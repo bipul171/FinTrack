@@ -61,7 +61,7 @@ fun HomeScreen(
         mutableStateOf(false)
     }
 
-    val transactions by viewModel.transactions.collectAsState(
+    val transactions by viewModel.currentMonthTransactions.collectAsState(
         initial = emptyList()
     )
 
