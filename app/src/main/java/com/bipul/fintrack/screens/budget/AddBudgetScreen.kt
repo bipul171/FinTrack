@@ -24,6 +24,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,8 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-
+import com.bipul.fintrack.screens.category.CategoryViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,8 +48,21 @@ fun AddBudgetScreen(
 
     val context = LocalContext.current
 
+    // Category ViewModel
+    val categoryViewModel: CategoryViewModel = hiltViewModel()
+    val budgetViewModel: BudgetViewModel = hiltViewModel()
+
+    // Categories from Room Database
+    val categories by categoryViewModel.categories.collectAsState(
+        initial = emptyList()
+    )
+
     var selectedCategory by remember {
         mutableStateOf("")
+    }
+
+    var selectedCategoryId by remember {
+        mutableStateOf<Long?>(null)
     }
 
     var budgetAmount by remember {
@@ -69,15 +84,6 @@ fun AddBudgetScreen(
     var errorMessage by remember {
         mutableStateOf("")
     }
-
-    val categories = listOf(
-        "Food",
-        "Transport",
-        "Entertainment",
-        "Shopping",
-        "Bills",
-        "Others"
-    )
 
     val months = listOf(
         "August 2026",
@@ -205,12 +211,13 @@ fun AddBudgetScreen(
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            text = category
+                                            text = category.name
                                         )
                                     },
                                     onClick = {
 
-                                        selectedCategory = category
+                                        selectedCategory = category.name
+                                        selectedCategoryId = category.categoryId
                                         categoryExpanded = false
                                         errorMessage = ""
                                     }
@@ -369,13 +376,18 @@ fun AddBudgetScreen(
 
                                 else -> {
 
+                                    budgetViewModel.addBudget(
+                                        categoryId = selectedCategoryId!!,
+                                        amount = budgetAmount.toDouble(),
+                                        month = selectedMonth
+                                    )
+
                                     Toast.makeText(
                                         context,
                                         "Budget added successfully",
                                         Toast.LENGTH_SHORT
                                     ).show()
 
-                                    // Database integration will be added later.
                                     navController.popBackStack()
                                 }
                             }
