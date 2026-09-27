@@ -23,6 +23,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedButton
@@ -94,6 +95,20 @@ fun HomeScreen(
         }
 
     val totalBalance = totalIncome - totalExpense
+
+    val totalTransactions = transactions.size
+
+    val maxAmount = maxOf(
+        totalIncome,
+        totalExpense,
+        1.0
+    )
+
+    val incomeProgress =
+        (totalIncome / maxAmount).toFloat()
+
+    val expenseProgress =
+        (totalExpense / maxAmount).toFloat()
 
     val context = LocalContext.current
 
@@ -193,6 +208,19 @@ fun HomeScreen(
             }
 
             item {
+
+                MonthlySummarySection(
+                    totalIncome = totalIncome,
+                    totalExpense = totalExpense,
+                    totalTransactions = totalTransactions,
+                    incomeProgress = incomeProgress,
+                    expenseProgress = expenseProgress
+                )
+
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
+
                 RecentTransactionsSection(
                     transactions = transactions,
                     categoryMap = categories.associateBy { it.categoryId }
@@ -853,5 +881,114 @@ fun TransactionItem(
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold
         )
+    }
+}
+
+@Composable
+fun MonthlySummarySection(
+    totalIncome: Double,
+    totalExpense: Double,
+    totalTransactions: Int,
+    incomeProgress: Float,
+    expenseProgress: Float
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+
+        Text(
+            text = "Monthly Summary",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(
+            modifier = Modifier.height(8.dp)
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(20.dp)
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+
+                Text(
+                    text = "Income",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
+                LinearProgressIndicator(
+                    progress = { incomeProgress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                )
+
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
+                Text(
+                    text = "৳ ${"%.2f".format(totalIncome)}",
+                    fontSize = 14.sp
+                )
+
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
+
+                Text(
+                    text = "Expense",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
+                LinearProgressIndicator(
+                    progress = { expenseProgress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                )
+
+                Spacer(
+                    modifier = Modifier.height(4.dp)
+                )
+
+                Text(
+                    text = "৳ ${"%.2f".format(totalExpense)}",
+                    fontSize = 14.sp
+                )
+
+                Spacer(
+                    modifier = Modifier.height(16.dp)
+                )
+
+                HorizontalDivider()
+
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
+
+                Text(
+                    text = "Transactions: $totalTransactions",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
     }
 }
