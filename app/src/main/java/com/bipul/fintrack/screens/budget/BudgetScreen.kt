@@ -1,5 +1,6 @@
 package com.bipul.fintrack.screens.budget
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,14 +31,12 @@ import com.bipul.fintrack.data.local.entity.CategoryEntity
 import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.screens.category.CategoryViewModel
 
-
 @Composable
 fun BudgetScreen(
     navController: NavHostController
 ) {
 
     val budgetViewModel: BudgetViewModel = hiltViewModel()
-
     val categoryViewModel: CategoryViewModel = hiltViewModel()
 
     val budgets by budgetViewModel.budgets.collectAsState(
@@ -112,7 +111,10 @@ fun BudgetScreen(
             CategoryBudgetSection(
                 budgets = budgets,
                 categoryMap = categoryMap,
-                categoryExpenses = categoryExpenses
+                categoryExpenses = categoryExpenses,
+                onDelete = { budget ->
+                    budgetViewModel.deleteBudget(budget)
+                }
             )
         }
 
@@ -306,7 +308,8 @@ fun BudgetOverviewSection(
 fun CategoryBudgetSection(
     budgets: List<BudgetEntity>,
     categoryMap: Map<Long, CategoryEntity>,
-    categoryExpenses: Map<Long, Double>
+    categoryExpenses: Map<Long, Double>,
+    onDelete: (BudgetEntity) -> Unit
 ) {
 
     Column(
@@ -355,7 +358,10 @@ fun CategoryBudgetSection(
                     categoryName = categoryName,
                     spentAmount = "৳ ${"%.2f".format(spentAmount)}",
                     budgetAmount = "৳ ${"%.2f".format(budget.amount)}",
-                    progress = progress
+                    progress = progress,
+                    onDelete = {
+                        onDelete(budget)
+                    }
                 )
 
                 Spacer(
@@ -372,7 +378,8 @@ fun BudgetCategoryItem(
     categoryName: String,
     spentAmount: String,
     budgetAmount: String,
-    progress: Float
+    progress: Float,
+    onDelete: () -> Unit
 ) {
 
     Card(
@@ -415,6 +422,20 @@ fun BudgetCategoryItem(
                     .height(8.dp),
                 strokeCap = StrokeCap.Round
             )
+
+            Spacer(
+                modifier = Modifier.height(12.dp)
+            )
+
+            Button(
+                onClick = onDelete,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Text(
+                    text = "Delete Budget"
+                )
+            }
         }
     }
 }
