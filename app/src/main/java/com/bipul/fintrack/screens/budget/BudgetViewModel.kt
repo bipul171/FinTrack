@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,8 +24,11 @@ class BudgetViewModel @Inject constructor(
     private val transactionRepository: TransactionRepository
 ) : ViewModel() {
 
+    // Current month budgets only
     val budgets: Flow<List<BudgetEntity>> =
-        repository.getAllBudgets()
+        repository.getBudgetsByMonth(
+            getCurrentMonth()
+        )
 
     val categoryExpenses: StateFlow<Map<Long, Double>> =
         transactionRepository
@@ -89,6 +94,18 @@ class BudgetViewModel @Inject constructor(
         viewModelScope.launch {
             repository.deleteBudget(budget)
         }
+    }
+
+    private fun getCurrentMonth(): String {
+
+        return LocalDate
+            .now()
+            .format(
+                DateTimeFormatter.ofPattern(
+                    "MMMM yyyy",
+                    Locale.ENGLISH
+                )
+            )
     }
 
     private fun getStartOfCurrentMonth(): Long {
