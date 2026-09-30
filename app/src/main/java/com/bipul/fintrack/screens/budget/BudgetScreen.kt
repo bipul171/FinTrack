@@ -61,8 +61,7 @@ fun BudgetScreen(
 
     val totalSpent = categoryExpenses.values.sum()
 
-    val remaining = (totalBudget - totalSpent)
-        .coerceAtLeast(0.0)
+    val remaining = totalBudget - totalSpent
 
     val overallProgress =
         if (totalBudget > 0) {
@@ -214,9 +213,18 @@ fun BudgetSummaryCard(
                     )
 
                     Text(
-                        text = "৳ ${"%.2f".format(remaining)}",
+                        text = if (remaining < 0) {
+                            "-৳ ${"%.2f".format(kotlin.math.abs(remaining))}"
+                        } else {
+                            "৳ ${"%.2f".format(remaining)}"
+                        },
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = if (remaining < 0) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
                     )
                 }
             }
