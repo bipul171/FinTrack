@@ -56,9 +56,20 @@ class BudgetViewModel @Inject constructor(
     fun addBudget(
         categoryId: Long,
         amount: Double,
-        month: String
+        month: String,
+        onResult: (Boolean) -> Unit
     ) {
         viewModelScope.launch {
+
+            val exists = repository.existsBudget(
+                categoryId = categoryId,
+                month = month
+            )
+
+            if (exists) {
+                onResult(false)
+                return@launch
+            }
 
             val budget = BudgetEntity(
                 categoryId = categoryId,
@@ -67,6 +78,8 @@ class BudgetViewModel @Inject constructor(
             )
 
             repository.insertBudget(budget)
+
+            onResult(true)
         }
     }
 

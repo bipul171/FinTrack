@@ -380,15 +380,24 @@ fun AddBudgetScreen(
                                         categoryId = selectedCategoryId!!,
                                         amount = budgetAmount.toDouble(),
                                         month = selectedMonth
-                                    )
+                                    ) { success ->
 
-                                    Toast.makeText(
-                                        context,
-                                        "Budget added successfully",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                        if (success) {
 
-                                    navController.popBackStack()
+                                            Toast.makeText(
+                                                context,
+                                                "Budget added successfully",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+
+                                            navController.popBackStack()
+
+                                        } else {
+
+                                            errorMessage =
+                                                "A budget already exists for this category and month."
+                                        }
+                                    }
                                 }
                             }
                         },

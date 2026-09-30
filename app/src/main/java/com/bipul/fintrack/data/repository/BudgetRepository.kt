@@ -25,11 +25,24 @@ class BudgetRepository @Inject constructor(
         return budgetDao.getBudgetsByCategory(categoryId)
     }
 
+
+    suspend fun existsBudget(
+        categoryId: Long,
+        month: String
+    ): Boolean {
+        return budgetDao.existsBudget(
+            categoryId,
+            month
+        )
+    }
+
+
     suspend fun insertBudget(
         budget: BudgetEntity
     ) {
         budgetDao.insertBudget(budget)
     }
+
 
     suspend fun deleteBudget(
         budget: BudgetEntity
