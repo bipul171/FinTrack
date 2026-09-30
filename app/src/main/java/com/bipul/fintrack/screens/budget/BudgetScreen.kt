@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -354,11 +355,19 @@ fun CategoryBudgetSection(
                         0f
                     }
 
+                val exceededAmount =
+                    if (spentAmount > budget.amount) {
+                        spentAmount - budget.amount
+                    } else {
+                        0.0
+                    }
+
                 BudgetCategoryItem(
                     categoryName = categoryName,
                     spentAmount = "৳ ${"%.2f".format(spentAmount)}",
                     budgetAmount = "৳ ${"%.2f".format(budget.amount)}",
                     progress = progress,
+                    exceededAmount = exceededAmount,
                     onDelete = {
                         onDelete(budget)
                     }
@@ -379,6 +388,7 @@ fun BudgetCategoryItem(
     spentAmount: String,
     budgetAmount: String,
     progress: Float,
+    exceededAmount: Double,
     onDelete: () -> Unit
 ) {
 
@@ -422,6 +432,17 @@ fun BudgetCategoryItem(
                     .height(8.dp),
                 strokeCap = StrokeCap.Round
             )
+
+            if (exceededAmount > 0) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "⚠ Budget exceeded by ৳ ${"%.2f".format(exceededAmount)}",
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
 
             Spacer(
                 modifier = Modifier.height(12.dp)
