@@ -65,9 +65,7 @@ fun BudgetScreen(
 
     val overallProgress =
         if (totalBudget > 0) {
-            (totalSpent / totalBudget)
-                .coerceIn(0.0, 1.0)
-                .toFloat()
+            (totalSpent / totalBudget).toFloat()
         } else {
             0f
         }
@@ -240,8 +238,7 @@ fun BudgetOverviewSection(
     progress: Float
 ) {
 
-    val percentage =
-        (progress * 100).toInt()
+    val percentage = (progress * 100).toInt()
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -292,7 +289,7 @@ fun BudgetOverviewSection(
                 )
 
                 LinearProgressIndicator(
-                    progress = { progress },
+                    progress = { progress.coerceIn(0f, 1f) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(10.dp),
