@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -23,6 +26,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -46,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.bipul.fintrack.data.local.entity.CategoryEntity
 import com.bipul.fintrack.data.local.entity.TransactionEntity
+import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.screens.category.CategoryViewModel
 import com.bipul.fintrack.screens.transaction.TransactionViewModel
 
@@ -59,6 +64,10 @@ fun HomeScreen(
     }
 
     var showExpenseDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var showLogoutDialog by remember {
         mutableStateOf(false)
     }
 
@@ -180,7 +189,11 @@ fun HomeScreen(
         ) {
 
             item {
-                HomeHeader()
+                HomeHeader(
+                    onProfileClick = {
+                        navController.navigate(AppRoutes.Profile.route)
+                    }
+                )
             }
 
             item {
@@ -284,12 +297,39 @@ fun HomeScreen(
             }
         )
     }
+    // Expense Dialog
+    if (showExpenseDialog) {
+
+        ExpenseDialog(
+            categories = categories,
+            onDismiss = {
+                showExpenseDialog = false
+            },
+            onConfirm = { amount, categoryId ->
+
+                viewModel.addTransaction(
+                    amount = amount,
+                    transactionType = "Expense",
+                    note = "Quick Expense",
+                    categoryId = categoryId
+                )
+
+                showExpenseDialog = false
+
+                Toast.makeText(
+                    context,
+                    "Expense added successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
+    }
 }
 
-
 @Composable
-fun HomeHeader() {
-
+fun HomeHeader(
+    onProfileClick: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -297,7 +337,6 @@ fun HomeHeader() {
     ) {
 
         Column {
-
             Text(
                 text = "Good Evening,",
                 fontSize = 16.sp,
@@ -311,13 +350,16 @@ fun HomeHeader() {
             )
         }
 
-        Text(
-            text = "🔔",
-            fontSize = 28.sp
-        )
+        IconButton(
+            onClick = onProfileClick
+        ) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Profile"
+            )
+        }
     }
 }
-
 
 @Composable
 fun TotalBalanceCard(

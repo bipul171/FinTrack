@@ -47,9 +47,15 @@ import com.bipul.fintrack.ui.theme.FinTrackPrimary
 import com.bipul.fintrack.ui.theme.ScreenBackground
 import com.bipul.fintrack.ui.theme.TextPrimary
 import com.bipul.fintrack.ui.theme.TextSecondary
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.LaunchedEffect
+import com.bipul.fintrack.util.security.PasswordHasher
 
 @Composable
-fun SignUpScreen(navController: NavHostController) {
+fun SignUpScreen(
+    navController: NavHostController,
+    viewModel: UserViewModel = hiltViewModel()
+) {
 
 
     var fullName by remember { mutableStateOf("") }
@@ -59,7 +65,7 @@ fun SignUpScreen(navController: NavHostController) {
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
-
+    var errorMessage by remember { mutableStateOf("") }
 
 
     Scaffold(
@@ -231,13 +237,65 @@ fun SignUpScreen(navController: NavHostController) {
             shape = RoundedCornerShape(16.dp)
         )
 
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = Color.Red,
+                    fontSize = 14.sp
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                navController.navigate(AppRoutes.Home.route) {
-                    popUpTo(AppRoutes.WelcomeOne.route) {
-                        inclusive = true
+
+                errorMessage = ""
+
+                when {
+                    fullName.isBlank() -> {
+                        errorMessage = "Please enter your full name"
+                    }
+
+                    userName.isBlank() -> {
+                        errorMessage = "Please enter a username"
+                    }
+
+                    email.isBlank() -> {
+                        errorMessage = "Please enter your email"
+                    }
+
+                    password.length < 6 -> {
+                        errorMessage = "Password must be at least 6 characters"
+                    }
+
+                    password != confirmPassword -> {
+                        errorMessage = "Passwords do not match"
+                    }
+
+                    else -> {
+
+                        val passwordHash = PasswordHasher.hash(password)
+
+                        viewModel.registerUser(
+                            fullName = fullName.trim(),
+                            username = userName.trim(),
+                            email = email.trim(),
+                            passwordHash = passwordHash
+                        ) { success, message ->
+
+                            if (success) {
+                                navController.navigate(AppRoutes.SignIn.route) {
+                                    popUpTo(AppRoutes.SignUp.route) {
+                                        inclusive = true
+                                    }
+                                }
+                            } else {
+                                errorMessage = message
+                            }
+                        }
                     }
                 }
             },

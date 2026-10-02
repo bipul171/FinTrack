@@ -4,12 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.bipul.fintrack.data.local.session.SessionManager
 import com.bipul.fintrack.screens.auth.ForgotPasswordScreen
 import com.bipul.fintrack.screens.auth.SignInScreen
 import com.bipul.fintrack.screens.auth.SignUpScreen
 import com.bipul.fintrack.screens.budget.AddBudgetScreen
 import com.bipul.fintrack.screens.budget.BudgetScreen
 import com.bipul.fintrack.screens.home.HomeScreen
+import com.bipul.fintrack.screens.profile.ProfileScreen
 import com.bipul.fintrack.screens.splash.SplashScreen
 import com.bipul.fintrack.screens.transaction.AddTransactionScreen
 import com.bipul.fintrack.screens.transaction.TransactionScreen
@@ -18,7 +20,10 @@ import com.bipul.fintrack.screens.welcome.WelcomeScreenTwo
 import com.bipul.fintrack.screens.welcome.WelcomeScreenThree
 
 @Composable
-fun WelcomeNavGraph(navController: NavHostController) {
+fun WelcomeNavGraph(
+    navController: NavHostController,
+    sessionManager: SessionManager
+) {
     NavHost(
         navController = navController,
         startDestination = AppRoutes.SplashScreen.route,
@@ -26,7 +31,16 @@ fun WelcomeNavGraph(navController: NavHostController) {
 
         composable(AppRoutes.SplashScreen.route) {
             SplashScreen {
-                navController.navigate(AppRoutes.WelcomeOne.route) {
+
+                val destination = if (
+                    sessionManager.isRememberMeEnabled()
+                ) {
+                    AppRoutes.Home.route
+                } else {
+                    AppRoutes.WelcomeOne.route
+                }
+
+                navController.navigate(destination) {
                     popUpTo(AppRoutes.SplashScreen.route) {
                         inclusive = true
                     }
@@ -57,6 +71,12 @@ fun WelcomeNavGraph(navController: NavHostController) {
 
         composable(AppRoutes.Home.route) {
             HomeScreen(navController)
+        }
+        composable(AppRoutes.Profile.route) {
+            ProfileScreen(
+                navController = navController,
+                sessionManager = sessionManager
+            )
         }
 
         composable(AppRoutes.Transaction.route) {

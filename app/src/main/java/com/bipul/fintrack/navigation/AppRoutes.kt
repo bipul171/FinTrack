@@ -13,6 +13,8 @@ sealed class AppRoutes(val route: String) {
 
     object Home : AppRoutes("home")
 
+    object Profile : AppRoutes("profile")
+
     object Transaction : AppRoutes(route = "Transaction")
 
     object Budget : AppRoutes(route = "Budget")
