@@ -3,6 +3,7 @@ package com.bipul.fintrack.screens.budget
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bipul.fintrack.data.local.entity.BudgetEntity
+import com.bipul.fintrack.data.model.CategoryExpense
 import com.bipul.fintrack.data.repository.BudgetRepository
 import com.bipul.fintrack.data.repository.TransactionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ class BudgetViewModel @Inject constructor(
             getCurrentMonth()
         )
 
+    // Current month expense by category
     val categoryExpenses: StateFlow<Map<Long, Double>> =
         transactionRepository
             .getTransactionsBetween(
@@ -58,6 +60,7 @@ class BudgetViewModel @Inject constructor(
                 initialValue = emptyMap()
             )
 
+    // Add budget
     fun addBudget(
         categoryId: Long,
         amount: Double,
@@ -88,11 +91,31 @@ class BudgetViewModel @Inject constructor(
         }
     }
 
+    // Delete budget
     fun deleteBudget(
         budget: BudgetEntity
     ) {
         viewModelScope.launch {
             repository.deleteBudget(budget)
+        }
+    }
+
+    // Convert category expense map into CategoryExpense list
+    fun getCategoryExpenses(
+        categoryNames: Map<Long, String>
+    ): Flow<List<CategoryExpense>> {
+
+        return categoryExpenses.map { expenses ->
+
+            expenses.map { (categoryId, amount) ->
+
+                CategoryExpense(
+                    categoryId = categoryId,
+                    categoryName = categoryNames[categoryId]
+                        ?: "Unknown Category",
+                    amount = amount
+                )
+            }
         }
     }
 

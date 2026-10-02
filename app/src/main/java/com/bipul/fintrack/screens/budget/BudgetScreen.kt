@@ -55,6 +55,14 @@ fun BudgetScreen(
         it.categoryId
     }
 
+    val categoryNames = categories.associate {
+        it.categoryId to it.name
+    }
+
+    val categoryExpensesList by budgetViewModel
+        .getCategoryExpenses(categoryNames)
+        .collectAsState(initial = emptyList())
+
     val totalBudget = budgets.sumOf {
         it.amount
     }
