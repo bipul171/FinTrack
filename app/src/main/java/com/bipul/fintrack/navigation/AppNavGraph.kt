@@ -101,6 +101,13 @@ fun WelcomeNavGraph(
             ForgotPasswordScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onPasswordChanged = {
+                    navController.navigate(AppRoutes.SignIn.route) {
+                        popUpTo(AppRoutes.ForgotPassword.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

@@ -8,39 +8,37 @@ class UserRepository @Inject constructor(
     private val userDao: UserDao
 ) {
 
-    suspend fun insertUser(user: UserEntity): Long {
-        return userDao.insertUser(user)
-    }
+    suspend fun insertUser(user: UserEntity): Long =
+        userDao.insertUser(user)
 
     suspend fun loginByUsername(
         username: String,
         passwordHash: String
-    ): UserEntity? {
-        return userDao.loginByUsername(
-            username = username,
-            passwordHash = passwordHash
-        )
-    }
+    ): UserEntity? =
+        userDao.loginByUsername(username, passwordHash)
 
     suspend fun loginByEmail(
         email: String,
         passwordHash: String
-    ): UserEntity? {
-        return userDao.loginByEmail(
-            email = email,
-            passwordHash = passwordHash
-        )
-    }
+    ): UserEntity? =
+        userDao.loginByEmail(email, passwordHash)
 
-    suspend fun usernameExists(
-        username: String
-    ): Boolean {
-        return userDao.usernameExists(username)
-    }
+    suspend fun usernameExists(username: String): Boolean =
+        userDao.usernameExists(username)
 
-    suspend fun emailExists(
+    suspend fun emailExists(email: String): Boolean =
+        userDao.emailExists(email)
+
+    suspend fun findUserByUsernameAndEmail(
+        username: String,
         email: String
-    ): Boolean {
-        return userDao.emailExists(email)
+    ): UserEntity? =
+        userDao.findUserByUsernameAndEmail(username, email)
+
+    suspend fun updatePassword(
+        userId: Long,
+        passwordHash: String
+    ) {
+        userDao.updatePassword(userId, passwordHash)
     }
 }

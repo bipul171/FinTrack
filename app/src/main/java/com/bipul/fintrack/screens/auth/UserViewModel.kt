@@ -5,15 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.bipul.fintrack.data.local.entity.UserEntity
 import com.bipul.fintrack.data.local.session.SessionManager
 import com.bipul.fintrack.data.repository.UserRepository
+import com.bipul.fintrack.util.security.PasswordHasher
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val repository: UserRepository,
     private val sessionManager: SessionManager
 ) : ViewModel() {
+
     fun registerUser(
         fullName: String,
         username: String,
@@ -55,11 +57,14 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
 
             val user = if (emailOrUsername.contains("@")) {
+
                 repository.loginByEmail(
                     email = emailOrUsername,
                     passwordHash = passwordHash
                 )
+
             } else {
+
                 repository.loginByUsername(
                     username = emailOrUsername,
                     passwordHash = passwordHash
@@ -71,6 +76,42 @@ class UserViewModel @Inject constructor(
             }
 
             onResult(user)
+        }
+    }
+
+    // Verify username and email
+    fun verifyAccount(
+        username: String,
+        email: String,
+        onResult: (UserEntity?) -> Unit
+    ) {
+        viewModelScope.launch {
+
+            val user = repository.findUserByUsernameAndEmail(
+                username = username,
+                email = email
+            )
+
+            onResult(user)
+        }
+    }
+
+    // Change password
+    fun changePassword(
+        userId: Long,
+        newPassword: String,
+        onResult: (Boolean) -> Unit
+    ) {
+        viewModelScope.launch {
+
+            val passwordHash = PasswordHasher.hash(newPassword)
+
+            repository.updatePassword(
+                userId = userId,
+                passwordHash = passwordHash
+            )
+
+            onResult(true)
         }
     }
 }

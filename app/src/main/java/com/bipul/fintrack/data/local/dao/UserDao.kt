@@ -39,9 +39,7 @@ interface UserDao {
             WHERE username = :username
         )
     """)
-    suspend fun usernameExists(
-        username: String
-    ): Boolean
+    suspend fun usernameExists(username: String): Boolean
 
     @Query("""
         SELECT EXISTS(
@@ -49,7 +47,28 @@ interface UserDao {
             WHERE email = :email
         )
     """)
-    suspend fun emailExists(
+    suspend fun emailExists(email: String): Boolean
+
+    // Verify username and email belong to the same account
+    @Query("""
+        SELECT * FROM users
+        WHERE username = :username
+        AND email = :email
+        LIMIT 1
+    """)
+    suspend fun findUserByUsernameAndEmail(
+        username: String,
         email: String
-    ): Boolean
+    ): UserEntity?
+
+    // Update password
+    @Query("""
+        UPDATE users
+        SET passwordHash = :passwordHash
+        WHERE userId = :userId
+    """)
+    suspend fun updatePassword(
+        userId: Long,
+        passwordHash: String
+    )
 }
