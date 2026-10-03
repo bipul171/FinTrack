@@ -1,7 +1,10 @@
 package com.bipul.fintrack.screens.home
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,18 +12,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
@@ -28,8 +38,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -42,6 +54,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,6 +66,7 @@ import com.bipul.fintrack.data.local.entity.TransactionEntity
 import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.screens.category.CategoryViewModel
 import com.bipul.fintrack.screens.transaction.TransactionViewModel
+import java.util.Calendar
 
 @Composable
 fun HomeScreen(
@@ -64,10 +78,6 @@ fun HomeScreen(
     }
 
     var showExpenseDialog by remember {
-        mutableStateOf(false)
-    }
-
-    var showLogoutDialog by remember {
         mutableStateOf(false)
     }
 
@@ -123,7 +133,14 @@ fun HomeScreen(
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = if (isSystemInDarkTheme()) {
+                    Color(0xFF1C2115)
+                } else {
+                    Color(0xFFF5F7FA)
+                },
+                tonalElevation = 8.dp
+            ) {
 
                 NavigationBarItem(
                     selected = true,
@@ -131,14 +148,35 @@ fun HomeScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Home,
-                            contentDescription = "Home"
+                            contentDescription = "Home",
+                            modifier = Modifier.size(26.dp)
                         )
                     },
                     label = {
                         Text(
-                            text = "Home"
+                            text = "Home",
+                            fontWeight = FontWeight.SemiBold
                         )
-                    }
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = if (isSystemInDarkTheme()) {
+                            Color(0xFFE8F5A8)
+                        } else {
+                            Color(0xFF365314)
+                        },
+                        selectedTextColor = if (isSystemInDarkTheme()) {
+                            Color(0xFFE8F5A8)
+                        } else {
+                            Color(0xFF365314)
+                        },
+                        indicatorColor = if (isSystemInDarkTheme()) {
+                            Color(0xFF4B5318)
+                        } else {
+                            Color(0xFFD9E88A)
+                        },
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
 
                 NavigationBarItem(
@@ -149,14 +187,20 @@ fun HomeScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.ReceiptLong,
-                            contentDescription = "Transactions"
+                            contentDescription = "Transactions",
+                            modifier = Modifier.size(26.dp)
                         )
                     },
                     label = {
-                        Text(
-                            text = "Transactions"
-                        )
-                    }
+                        Text("Transactions")
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
 
                 NavigationBarItem(
@@ -167,14 +211,20 @@ fun HomeScreen(
                     icon = {
                         Icon(
                             imageVector = Icons.Default.AccountBalanceWallet,
-                            contentDescription = "Budget"
+                            contentDescription = "Budget",
+                            modifier = Modifier.size(26.dp)
                         )
                     },
                     label = {
-                        Text(
-                            text = "Budget"
-                        )
-                    }
+                        Text("Budget")
+                    },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                        selectedTextColor = MaterialTheme.colorScheme.primary,
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
             }
         }
@@ -297,65 +347,86 @@ fun HomeScreen(
             }
         )
     }
-    // Expense Dialog
-    if (showExpenseDialog) {
-
-        ExpenseDialog(
-            categories = categories,
-            onDismiss = {
-                showExpenseDialog = false
-            },
-            onConfirm = { amount, categoryId ->
-
-                viewModel.addTransaction(
-                    amount = amount,
-                    transactionType = "Expense",
-                    note = "Quick Expense",
-                    categoryId = categoryId
-                )
-
-                showExpenseDialog = false
-
-                Toast.makeText(
-                    context,
-                    "Expense added successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
-    }
 }
 
 @Composable
 fun HomeHeader(
     onProfileClick: () -> Unit
 ) {
+    val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+    val isDark = isSystemInDarkTheme()
+
+    val greeting = when (currentHour) {
+        in 5..11 -> "Good Morning,"
+        in 12..16 -> "Good Afternoon,"
+        in 17..20 -> "Good Evening,"
+        else -> "Good Night,"
+    }
+
+    val greetingColor = if (isDark) {
+        Color(0xFFCBD5E1)
+    } else {
+        Color(0xFF64748B)
+    }
+
+    val nameColor = if (isDark) {
+        Color(0xFFE0E7FF)
+    } else {
+        Color(0xFF1E3A8A)
+    }
+
+    val profileBackground = if (isDark) {
+        Color(0xFF312E81)
+    } else {
+        Color(0xFFE0E7FF)
+    }
+
+    val profileIconColor = if (isDark) {
+        Color(0xFFC7D2FE)
+    } else {
+        Color(0xFF3730A3)
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+
             Text(
-                text = "Good Evening,",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                text = greeting,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                color = greetingColor
             )
 
             Text(
                 text = "Md. Bipul Mia",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                color = nameColor
             )
         }
 
         IconButton(
-            onClick = onProfileClick
+            onClick = onProfileClick,
+            modifier = Modifier
+                .size(48.dp)
+                .background(
+                    color = profileBackground,
+                    shape = CircleShape
+                )
         ) {
             Icon(
                 imageVector = Icons.Default.Person,
-                contentDescription = "Profile"
+                contentDescription = "Profile",
+                tint = profileIconColor
             )
         }
     }
@@ -365,33 +436,55 @@ fun HomeHeader(
 fun TotalBalanceCard(
     balance: Double
 ) {
+    val isDark = isSystemInDarkTheme()
+
+    val backgroundColor = if (isDark) {
+        Color(0xFF1E3A8A)
+    } else {
+        Color(0xFFE0E7FF)
+    }
+
+    val titleColor = if (isDark) {
+        Color(0xFFDCE7FF)
+    } else {
+        Color(0xFF3730A3)
+    }
+
+    val amountColor = if (isDark) {
+        Color.White
+    } else {
+        Color(0xFF1E1B4B)
+    }
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp)
+        modifier = Modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = backgroundColor
+        )
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Text(
                 text = "Total Balance",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                color = titleColor
             )
 
-            Spacer(
-                modifier = Modifier.height(8.dp)
-            )
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "৳ ${"%.2f".format(balance)}",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                color = amountColor
             )
         }
     }
@@ -403,70 +496,97 @@ fun IncomeExpenseSection(
     income: Double,
     expense: Double
 ) {
+    val isDark = isSystemInDarkTheme()
+
+    val incomeBackground = if (isDark) {
+        Color(0xFF123B2A)
+    } else {
+        Color(0xFFE8F5E9)
+    }
+
+    val incomeColor = if (isDark) {
+        Color(0xFF86EFAC)
+    } else {
+        Color(0xFF15803D)
+    }
+
+    val expenseBackground = if (isDark) {
+        Color(0xFF451A1A)
+    } else {
+        Color(0xFFFFEBEE)
+    }
+
+    val expenseColor = if (isDark) {
+        Color(0xFFFCA5A5)
+    } else {
+        Color(0xFFDC2626)
+    }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
         Card(
             modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = incomeBackground
+            )
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(vertical = 22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
                     text = "Income",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = incomeColor
                 )
 
-                Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "৳ ${"%.2f".format(income)}",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = incomeColor
                 )
             }
         }
 
         Card(
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 8.dp),
-            shape = RoundedCornerShape(20.dp)
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = expenseBackground
+            )
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(vertical = 22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
                     text = "Expense",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = expenseColor
                 )
 
-                Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = "৳ ${"%.2f".format(expense)}",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 21.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = expenseColor
                 )
             }
         }
@@ -479,6 +599,31 @@ fun QuickActionsSection(
     onIncomeClick: () -> Unit,
     onExpenseClick: () -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+
+    val incomeBackground = if (isDark) {
+        Color(0xFF166534)
+    } else {
+        Color(0xFFDCFCE7)
+    }
+
+    val incomeContent = if (isDark) {
+        Color(0xFFDCFCE7)
+    } else {
+        Color(0xFF15803D)
+    }
+
+    val expenseBackground = if (isDark) {
+        Color(0xFF991B1B)
+    } else {
+        Color(0xFFFEE2E2)
+    }
+
+    val expenseContent = if (isDark) {
+        Color(0xFFFEE2E2)
+    } else {
+        Color(0xFFDC2626)
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -490,9 +635,7 @@ fun QuickActionsSection(
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(
-            modifier = Modifier.height(8.dp)
-        )
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -501,31 +644,56 @@ fun QuickActionsSection(
 
             Button(
                 onClick = onIncomeClick,
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(54.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = incomeBackground,
+                    contentColor = incomeContent
+                )
             ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Income"
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "+ Income",
-                    fontSize = 16.sp
+                    text = "Income",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
 
-            OutlinedButton(
+            Button(
                 onClick = onExpenseClick,
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(16.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .height(54.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = expenseBackground,
+                    contentColor = expenseContent
+                )
             ) {
+                Icon(
+                    imageVector = Icons.Default.Remove,
+                    contentDescription = "Add Expense"
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "- Expense",
-                    fontSize = 16.sp
+                    text = "Expense",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
     }
 }
-
 
 @Composable
 fun AmountDialog(
@@ -791,84 +959,72 @@ fun RecentTransactionsSection(
     transactions: List<TransactionEntity>,
     categoryMap: Map<Long, CategoryEntity>
 ) {
-
     val recentTransactions = transactions
-        .sortedByDescending {
-            it.date
-        }
+        .sortedByDescending { it.date }
         .take(5)
 
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-
         Text(
             text = "Recent Transactions",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(
-            modifier = Modifier.height(8.dp)
-        )
+        Spacer(modifier = Modifier.height(12.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                    alpha = 0.45f
+                )
+            )
         ) {
+            if (recentTransactions.isEmpty()) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ReceiptLong,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
 
-                if (recentTransactions.isEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = "No transactions yet.",
-                        fontSize = 16.sp
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
 
-                } else {
+            } else {
 
-                    recentTransactions.forEachIndexed {
-                            index,
-                            transaction ->
-
-                        val sign =
-                            if (
-                                transaction.transactionType.equals(
-                                    "Income",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                "+"
-                            } else {
-                                "-"
-                            }
-
-                        val title =
-                            transaction.note.ifBlank {
-                                transaction.transactionType
-                            }
-
-                        val categoryName =
-                            transaction.categoryId?.let { categoryId ->
-                                categoryMap[categoryId]?.name
-                            }
+                Column(
+                    modifier = Modifier.padding(vertical = 6.dp)
+                ) {
+                    recentTransactions.forEach { transaction ->
 
                         TransactionItem(
-                            title = title,
-                            category = categoryName,
-                            amount = "$sign৳ ${"%.2f".format(transaction.amount)}"
+                            transaction = transaction,
+                            category = transaction.categoryId?.let {
+                                categoryMap[it]
+                            }
                         )
 
-                        if (
-                            index <
-                            recentTransactions.lastIndex
-                        ) {
-                            HorizontalDivider()
+                        if (transaction != recentTransactions.last()) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
                         }
                     }
                 }
@@ -880,48 +1036,104 @@ fun RecentTransactionsSection(
 
 @Composable
 fun TransactionItem(
-    title: String,
-    category: String?,
-    amount: String
+    transaction: TransactionEntity,
+    category: CategoryEntity?
 ) {
+    val isIncome = transaction.transactionType.equals(
+        "Income",
+        ignoreCase = true
+    )
+
+    val accentColor = if (isIncome) {
+        if (isSystemInDarkTheme()) {
+            Color(0xFF4ADE80)
+        } else {
+            Color(0xFF16A34A)
+        }
+    } else {
+        if (isSystemInDarkTheme()) {
+            Color(0xFFF87171)
+        } else {
+            Color(0xFFDC2626)
+        }
+    }
+
+    val iconBackground = if (isIncome) {
+        if (isSystemInDarkTheme()) {
+            Color(0xFF14532D)
+        } else {
+            Color(0xFFDCFCE7)
+        }
+    } else {
+        if (isSystemInDarkTheme()) {
+            Color(0xFF7F1D1D)
+        } else {
+            Color(0xFFFEE2E2)
+        }
+    }
+
+    val icon = if (isIncome) {
+        Icons.Default.ArrowDownward
+    } else {
+        Icons.Default.ArrowUpward
+    }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
-
-        horizontalArrangement =
-            Arrangement.SpaceBetween,
-
-        verticalAlignment =
-            Alignment.CenterVertically
+            .padding(
+                horizontal = 16.dp,
+                vertical = 14.dp
+            ),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Column {
+        Box(
+            modifier = Modifier
+                .size(44.dp)
+                .background(
+                    color = iconBackground,
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = accentColor,
+                modifier = Modifier.size(22.dp)
+            )
+        }
 
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
             Text(
-                text = title,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium
+                text = transaction.note.ifBlank {
+                    transaction.transactionType
+                },
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold
             )
 
-            if (category != null) {
+            Spacer(modifier = Modifier.height(3.dp))
 
-                Spacer(
-                    modifier = Modifier.height(2.dp)
-                )
-
-                Text(
-                    text = "Category: $category",
-                    fontSize = 13.sp
-                )
-            }
+            Text(
+                text = category?.name ?: "Uncategorized",
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
 
         Text(
-            text = amount,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            text = "${if (isIncome) "+" else "-"} ৳ ${
+                "%.2f".format(transaction.amount)
+            }",
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            color = accentColor
         )
     }
 }
@@ -934,6 +1146,26 @@ fun MonthlySummarySection(
     incomeProgress: Float,
     expenseProgress: Float
 ) {
+    val isDark = isSystemInDarkTheme()
+
+    val incomeColor = if (isDark) {
+        Color(0xFF4ADE80)
+    } else {
+        Color(0xFF16A34A)
+    }
+
+    val expenseColor = if (isDark) {
+        Color(0xFFF87171)
+    } else {
+        Color(0xFFDC2626)
+    }
+
+    val progressBackground = if (isDark) {
+        Color(0xFF334155)
+    } else {
+        Color(0xFFE2E8F0)
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -944,92 +1176,107 @@ fun MonthlySummarySection(
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(
-            modifier = Modifier.height(8.dp)
-        )
+        Spacer(modifier = Modifier.height(12.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(22.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+                    alpha = 0.45f
+                )
+            )
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
 
-                Text(
-                    text = "Income",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                // Income
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Income",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = incomeColor
+                    )
 
-                Spacer(
-                    modifier = Modifier.height(4.dp)
-                )
-
-                LinearProgressIndicator(
-                    progress = { incomeProgress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                )
-
-                Spacer(
-                    modifier = Modifier.height(4.dp)
-                )
-
-                Text(
-                    text = "৳ ${"%.2f".format(totalIncome)}",
-                    fontSize = 14.sp
-                )
-
-                Spacer(
-                    modifier = Modifier.height(16.dp)
-                )
-
-                Text(
-                    text = "Expense",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
-                )
-
-                Spacer(
-                    modifier = Modifier.height(4.dp)
-                )
+                    Text(
+                        text = "৳ ${"%.2f".format(totalIncome)}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = incomeColor
+                    )
+                }
 
                 LinearProgressIndicator(
-                    progress = { expenseProgress },
+                    progress = { incomeProgress.coerceIn(0f, 1f) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(8.dp)
+                        .height(8.dp),
+                    color = incomeColor,
+                    trackColor = progressBackground
                 )
 
-                Spacer(
-                    modifier = Modifier.height(4.dp)
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Expense
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Expense",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = expenseColor
+                    )
+
+                    Text(
+                        text = "৳ ${"%.2f".format(totalExpense)}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = expenseColor
+                    )
+                }
+
+                LinearProgressIndicator(
+                    progress = { expenseProgress.coerceIn(0f, 1f) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp),
+                    color = expenseColor,
+                    trackColor = progressBackground
                 )
 
-                Text(
-                    text = "৳ ${"%.2f".format(totalExpense)}",
-                    fontSize = 14.sp
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 4.dp)
                 )
 
-                Spacer(
-                    modifier = Modifier.height(16.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Transactions",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium
+                    )
 
-                HorizontalDivider()
-
-                Spacer(
-                    modifier = Modifier.height(12.dp)
-                )
-
-                Text(
-                    text = "Transactions: $totalTransactions",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium
-                )
+                    Text(
+                        text = totalTransactions.toString(),
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }
