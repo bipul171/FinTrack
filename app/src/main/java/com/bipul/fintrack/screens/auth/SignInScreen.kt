@@ -44,17 +44,21 @@ import com.bipul.fintrack.ui.theme.FinTrackPrimary
 import com.bipul.fintrack.ui.theme.ScreenBackground
 import com.bipul.fintrack.ui.theme.TextPrimary
 import com.bipul.fintrack.ui.theme.TextSecondary
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.bipul.fintrack.util.security.PasswordHasher
 
 
 @Composable
-fun SignInScreen(navController: NavHostController) {
+fun SignInScreen(
+    navController: NavHostController,
+    viewModel: UserViewModel = hiltViewModel()
+) {
 
     var emailOrUsername by remember { mutableStateOf(value = "") }
     var password by remember { mutableStateOf(value = "") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var rememberMe by remember {
-        mutableStateOf(false)
-    }
+    var rememberMe by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
 
     Scaffold(
@@ -176,12 +180,52 @@ fun SignInScreen(navController: NavHostController) {
                     color = TextSecondary
                 )
             }
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = Color.Red,
+                    fontSize = 14.sp
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+            }
 
             TextButton(
                 onClick = {
-                    navController.navigate(AppRoutes.Home.route) {
-                        popUpTo(AppRoutes.WelcomeOne.route) {
-                            inclusive = true
+
+                    errorMessage = ""
+
+                    when {
+                        emailOrUsername.isBlank() -> {
+                            errorMessage = "Please enter username or email"
+                        }
+
+                        password.isBlank() -> {
+                            errorMessage = "Please enter password"
+                        }
+
+                        else -> {
+
+                            val passwordHash = PasswordHasher.hash(password)
+
+                            viewModel.loginUser(
+                                emailOrUsername = emailOrUsername.trim(),
+                                passwordHash = passwordHash,
+                                rememberMe = rememberMe
+                            ) { user ->
+
+                                if (user != null) {
+
+                                    navController.navigate(AppRoutes.Home.route) {
+                                        popUpTo(AppRoutes.WelcomeOne.route) {
+                                            inclusive = true
+                                        }
+                                    }
+
+                                } else {
+                                    errorMessage = "Invalid username/email or password"
+                                }
+                            }
                         }
                     }
                 },
