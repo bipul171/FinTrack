@@ -17,11 +17,15 @@ class CategoryRepository @Inject constructor(
         return categoryDao.getCategoriesByType(type)
     }
 
-    suspend fun insertCategory(category: CategoryEntity) {
-        categoryDao.insertCategory(category)
+    suspend fun insertCategory(category: CategoryEntity): Long {
+        return categoryDao.insertCategory(category)
     }
 
     suspend fun deleteCategory(category: CategoryEntity) {
         categoryDao.deleteCategory(category)
+    }
+
+    suspend fun getAllCategoriesOnce(): List<CategoryEntity> {
+        return categoryDao.getAllCategoriesOnce()
     }
 }

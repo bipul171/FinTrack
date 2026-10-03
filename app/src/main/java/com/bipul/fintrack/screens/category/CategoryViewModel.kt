@@ -22,8 +22,9 @@ class CategoryViewModel @Inject constructor(
         type: String
     ) {
         viewModelScope.launch {
+
             val category = CategoryEntity(
-                name = name,
+                name = name.trim(),
                 type = type
             )
 
@@ -34,6 +35,44 @@ class CategoryViewModel @Inject constructor(
     fun deleteCategory(category: CategoryEntity) {
         viewModelScope.launch {
             repository.deleteCategory(category)
+        }
+    }
+
+    fun findOrCreateCategory(
+        name: String,
+        type: String,
+        onResult: (Long) -> Unit
+    ) {
+        viewModelScope.launch {
+
+            val normalizedName = name.trim()
+
+            if (normalizedName.isEmpty()) {
+                return@launch
+            }
+
+            val existingCategory = repository
+                .getAllCategoriesOnce()
+                .firstOrNull {
+                    it.name.equals(normalizedName, ignoreCase = true) &&
+                            it.type.equals(type, ignoreCase = true)
+                }
+
+            val categoryId = if (existingCategory != null) {
+
+                existingCategory.categoryId
+
+            } else {
+
+                repository.insertCategory(
+                    CategoryEntity(
+                        name = normalizedName,
+                        type = type
+                    )
+                )
+            }
+
+            onResult(categoryId)
         }
     }
 }
