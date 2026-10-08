@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.ui.res.painterResource
 import com.bipul.fintrack.R
 import com.bipul.fintrack.navigation.AppRoutes
@@ -96,6 +97,7 @@ fun SignUpScreen(
             .fillMaxSize()
             .background(colorScheme.background)
             .verticalScroll(rememberScrollState())
+            .imePadding()
             .padding(
                 horizontal = 20.dp,
                 vertical = 24.dp

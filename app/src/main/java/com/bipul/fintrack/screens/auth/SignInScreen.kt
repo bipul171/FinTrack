@@ -50,6 +50,7 @@ import com.bipul.fintrack.R
 import com.bipul.fintrack.navigation.AppRoutes
 import com.bipul.fintrack.util.security.PasswordHasher
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.ui.res.painterResource
 
 @Composable
@@ -86,6 +87,7 @@ fun SignInScreen(
             .fillMaxSize()
             .background(colorScheme.background)
             .verticalScroll(rememberScrollState())
+            .imePadding()
             .padding(
                 horizontal = 20.dp,
                 vertical = 24.dp
